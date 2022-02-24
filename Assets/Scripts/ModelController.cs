@@ -43,6 +43,6 @@ public class ModelController : MonoBehaviour
 
     public void Hop()
     {
-        _animator.SetTrigger(0);
+        _animator.SetTrigger("Hop");
     }
 }
