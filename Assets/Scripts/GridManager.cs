@@ -15,9 +15,9 @@ public class GridManager : MonoBehaviour
     public Tilemap interactables;
     
     public Vector3Int[,] spots;
-    public Node[,] NodeArray;
+    public Node[,] NodeGrid;
 
-    Astar astar;
+    public Astar PathFinder;
     new Camera camera;
     
     [Header("Tile Info")]
@@ -47,7 +47,7 @@ public class GridManager : MonoBehaviour
         camera = Camera.main;
         
         CreateNodeArrayTilemaps();
-        astar = new Astar(groundBounds.size.x, groundBounds.size.y);
+        PathFinder = new Astar(groundBounds.size.x, groundBounds.size.y);
     }
     private void Update()
     {
@@ -55,7 +55,9 @@ public class GridManager : MonoBehaviour
         {
             Vector3 world = camera.ScreenToWorldPoint(Input.mousePosition);
             curGridPos = ground.WorldToCell(world);
-            curTileType = NodeArray[curGridPos.x, curGridPos.y].nodeType.ToString();
+            if (curGridPos.x < 0 || curGridPos.x >= groundBounds.size.x || curGridPos.y < 0 ||
+                curGridPos.y >= groundBounds.size.y) return;
+            curTileType = NodeGrid[curGridPos.x, curGridPos.y].nodeType.ToString();
         }
     }
 
@@ -65,7 +67,7 @@ public class GridManager : MonoBehaviour
     /// </summary>
     private void CreateNodeArrayTilemaps()
     {
-        NodeArray = new Node[groundBounds.size.x, groundBounds.size.y];
+        NodeGrid = new Node[groundBounds.size.x, groundBounds.size.y];
         Vector3Int nodeGridOrg = new Vector3Int(groundBounds.xMin, groundBounds.yMin, 0);
         
         #region Ground Tilemap
@@ -75,11 +77,11 @@ public class GridManager : MonoBehaviour
             {
                 if (ground.HasTile(new Vector3Int(x, y, 0)))
                 {
-                    NodeArray[i, j] = new Node(x, y, 0, NodeTypes.Ground);
+                    NodeGrid[i, j] = new Node(x, y, 0, NodeTypes.Ground);
                 }
                 else
                 {
-                    NodeArray[i, j] = new Node(x, y, 0, NodeTypes.None);
+                    NodeGrid[i, j] = new Node(x, y, 0, NodeTypes.None);
                 }
             }
         }
@@ -95,7 +97,7 @@ public class GridManager : MonoBehaviour
                 
                 int p = x - nodeGridOrg.x;
                 int q = y - nodeGridOrg.y;
-                NodeArray[p, q] = new Node(x, y, 0, NodeTypes.Obstacle);
+                NodeGrid[p, q] = new Node(x, y, 0, NodeTypes.Obstacle);
             }
         }
 
@@ -109,9 +111,14 @@ public class GridManager : MonoBehaviour
         return curIndex;
     }
 
+    public Vector3 GetWorldPositionFromNodeGrid(int x, int y)
+    {
+        return ground.CellToWorld(new Vector3Int(x, y, 0));
+    }
+
     public NodeTypes GetNodeType(int x, int y)
     {
         if (x < 0 || x >= groundBounds.size.x || y < 0 || y >= groundBounds.size.y) return NodeTypes.None;
-        return NodeArray[x, y].nodeType;
+        return NodeGrid[x, y].nodeType;
     }
 }

@@ -7,7 +7,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     const float MOVE_THRESHOLD = 0.0001f;
-    public float moveSpeed = 5f;
+    public float MoveSpeed = 5f;
     public Transform movePoint;
 
     [Header("Neighbor Tile Detection")] 
@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour
     
     void Update()
     {
-        transform.position = Vector3.MoveTowards(transform.position, movePoint.position, moveSpeed * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, movePoint.position, MoveSpeed * Time.deltaTime);
         
         if (Vector3.Distance(transform.position, movePoint.position) > MOVE_THRESHOLD) return;
         UpdateMovableDirection();
