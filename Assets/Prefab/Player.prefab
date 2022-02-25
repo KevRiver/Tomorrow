@@ -107,7 +107,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 3
   m_Sprite: {fileID: 6983202077367773121, guid: b00ed833f739dd143866727bbb514a55, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -131,6 +131,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f22fb8a2ead5404dabfb52c74ad1fe0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  AnimController: {fileID: 0}
   Sprites:
   - {fileID: 6983202077367773121, guid: b00ed833f739dd143866727bbb514a55, type: 3}
   - {fileID: 2165717997959944645, guid: b00ed833f739dd143866727bbb514a55, type: 3}
@@ -339,8 +340,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f5d48da8d98b9449904af86273b1407, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
+  MoveSpeed: 5
   movePoint: {fileID: 8049362633836749996}
+  item: {fileID: 0}
+  LeftItem: {fileID: 0}
+  RightItem: {fileID: 0}
+  itemKnife: {fileID: 0}
+  itemLock: {fileID: 0}
   Grid: {fileID: 0}
   CanMoveLeft: 0
   CanMoveRight: 0

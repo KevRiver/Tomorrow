@@ -104,11 +104,29 @@ public class GridManager : MonoBehaviour
         #endregion
     }
 
-    public Vector2Int GetNodeGridIndex(Vector3Int worldPosition)
+    public Vector2Int GetNodeGridIndex(Vector3 worldPosition)
     {
         Vector3Int curNodeGridPos = ground.WorldToCell(worldPosition);
         Vector2Int curIndex = new Vector2Int(curNodeGridPos.x, curNodeGridPos.y);
         return curIndex;
+    }
+    
+    public bool CheckMovementValid(Vector3 pos, Vector2 dir)
+    {
+        Vector2Int index = GetNodeGridIndex(pos);
+        if (index.y < groundBounds.size.y && dir.Equals(Vector2.up))
+            return GetNodeType(index.x, index.y + 1) == NodeTypes.Ground;
+        
+        if (index.y > 0 && dir.Equals(Vector2.down))
+            return GetNodeType(index.x, index.y - 1) == NodeTypes.Ground;
+        
+        if (index.x < groundBounds.size.x && dir.Equals(Vector2.right))
+            return GetNodeType(index.x + 1, index.y) == NodeTypes.Ground;
+        
+        if (index.x > 0 && dir.Equals(Vector2.left))
+            return GetNodeType(index.x - 1, index.y) == NodeTypes.Ground;
+
+        return false;
     }
 
     public Vector3 GetWorldPositionFromNodeGrid(int x, int y)

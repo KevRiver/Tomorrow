@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2d5751a2c961df945a34295ccf5e576d, type: 3}
-  m_Name: PlayerBrush
+  m_Name: ChairFrontBrush
   m_EditorClassIdentifier: 
   m_Cells:
   - m_Tile: {fileID: 0}
@@ -37,4 +37,4 @@ MonoBehaviour:
   m_CanChangeZPosition: 0
   m_FloodFillContiguousOnly: 1
   m_Anchor: {x: 0.5, y: 0.5, z: 0.5}
-  m_Prefab: {fileID: 8049362635294008369, guid: 4a63ff87106f8e5459718774668f56fb, type: 3}
+  m_Prefab: {fileID: 9092088795950099423, guid: a18a27868942f3f489abdedbf28c84f5, type: 3}
