@@ -1,48 +1,54 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.U2D.Animation;
 using UnityEngine;
 
 [RequireComponent(typeof(SpriteRenderer))]
-[RequireComponent(typeof(Animator))]
 public class ModelController : MonoBehaviour
 {
     private SpriteRenderer _renderer;
-    private Animator _animator;
+    public Animator AnimController;
     public List<Sprite> Sprites;
+    
+    private const int DOWN = 0;
+    private const int RIGHT = 1;
+    private const int UP = 2;
     private void Start()
     {
         _renderer = GetComponent<SpriteRenderer>();
-        _animator = GetComponent<Animator>();
-        _renderer.sprite = Sprites[0];
+        AnimController = GetComponent<Animator>();
+        _renderer.sprite = Sprites[DOWN];
     }
 
     public void FaceLeft()
     {
-        _renderer.flipX = false;
-        _renderer.sprite = Sprites[1];
+        _renderer.flipX = true;
+        _renderer.sprite = Sprites[RIGHT];
     }
 
     public void FaceRight()
     {
-        _renderer.flipX = true;
-        _renderer.sprite = Sprites[1];
+        _renderer.flipX = false;
+        _renderer.sprite = Sprites[RIGHT];
     }
 
     public void FaceUp()
     {
         _renderer.flipX = false;
-        _renderer.sprite = Sprites[2];
+        _renderer.sprite = Sprites[UP];
     }
 
     public void FaceDown()
     {
         _renderer.flipX = false;
-        _renderer.sprite = Sprites[0];
+        _renderer.sprite = Sprites[DOWN];
     }
 
     public void Hop()
     {
-        _animator.SetTrigger("Hop");
+        if (AnimController == null) return;
+        int id = Animator.StringToHash("Hop");
+        AnimController.SetTrigger(id);
     }
 }

@@ -1,14 +1,15 @@
 #define DEBUG
 
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
     const float MOVE_THRESHOLD = 0.0001f;
-    public float moveSpeed = 5f;
+    public float MoveSpeed = 5f;
     public Transform movePoint;
-
+    
     public GameEvent MoveLeft;
     public GameEvent MoveRight;
     public GameEvent MoveUp;
@@ -16,29 +17,49 @@ public class PlayerController : MonoBehaviour
 
     public GameObject item, LeftItem, RightItem;
     public Sprite itemKnife, itemLock;
-    // Start is called before the first frame update
+    
+    [Header("Neighbor Tile Detection")] 
+    public GridManager Grid;
+    [SerializeField] private bool CanMoveLeft = false;
+    [SerializeField] private bool CanMoveRight = false;
+    [SerializeField] private bool CanMoveUp = false;
+    [SerializeField] private bool CanMoveDown = false;
+    
+    [Header("MoveEvents")]
+    public GameEvent FaceLeft;
+    public GameEvent FaceRight;
+    public GameEvent FaceUp;
+    public GameEvent FaceDown;
+    public GameEvent Move;
+    public GameEvent Drag;
+    
     void Start()
     {
+        transform.parent = null;
         movePoint.parent = null;
     }
-
-    // Update is called once per frame
+    
     void Update()
     {
-        transform.position = Vector3.MoveTowards(transform.position, movePoint.position, moveSpeed * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, movePoint.position, MoveSpeed * Time.deltaTime);
         
         if (Vector3.Distance(transform.position, movePoint.position) > MOVE_THRESHOLD) return;
+        UpdateMovableDirection();
         
         float horizontalInput = Input.GetAxisRaw("Horizontal");
         float verticalInput = Input.GetAxisRaw("Vertical");
         if (Mathf.Abs(horizontalInput) >= 1f)
         {
             float dir = Mathf.Sign(horizontalInput);
-            if(dir > 0) MoveLeft.Raise();
-            else MoveRight.Raise();
-#if DEBUG
-            Debug.LogFormat("horizontal input: {0}", dir);
-#endif
+
+            if(dir < 0) FaceLeft.Raise();
+            else FaceRight.Raise();
+            
+            if (dir < 0 && !CanMoveLeft) return;
+            if (dir > 0 && !CanMoveRight) return;
+            
+            Move.Raise();
+
             movePoint.position += new Vector3(dir, 0f, 0f);
             
             item.GetComponent<SpriteRenderer>().flipX = (horizontalInput >= 1f);
@@ -50,14 +71,18 @@ public class PlayerController : MonoBehaviour
         else if (Math.Abs(Input.GetAxisRaw("Vertical")) >= 1f)
         {
             float dir = Mathf.Sign(verticalInput);
-            if(dir > 0) MoveUp.Raise();
-            else MoveDown.Raise();
-#if DEBUG
-            Debug.LogFormat("vertical input: {0}", dir);
-#endif
+            
+            if(dir > 0) FaceUp.Raise();
+            else FaceDown.Raise();
+            
+            if (dir < 0 && !CanMoveDown) return;
+            if (dir > 0 && !CanMoveUp) return;
+            
+            Move.Raise();
+
             movePoint.position += new Vector3(0f, dir, 0f);
             
-            // vertical inputÀÌ¸é ¾ÆÀÌÅÛÀÇ order layer¸¦ 0À¸·Î, ¾Æ´Ï¸é 1·Î ÁöÁ¤
+            // vertical inputï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ order layerï¿½ï¿½ 0ï¿½ï¿½ï¿½ï¿½, ï¿½Æ´Ï¸ï¿½ 1ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             bool isVerticalInput = (verticalInput >= 1f);
 
             item.GetComponent<SpriteRenderer>().flipX = isVerticalInput;
@@ -67,37 +92,19 @@ public class PlayerController : MonoBehaviour
             item.GetComponent<SpriteRenderer>().sortingOrder = Convert.ToInt32(!isVerticalInput);
         }
     }
-
-    void SetItemPosition(bool isVertical)
-    {
-        /*
-         horizontal >= 1ÀÌ¸é
-            flipX = true
-            rightItem
-         else
-            flipX = false
-            leftItem
-
-         vertical >= 1ÀÌ¸é
-            flipX = true
-            rightItem
-         else
-            leftItem
-         */
-    }
-
+    
     void GetItem(Collider2D collision)
     {
-        // ÇÃ·¹ÀÌ¾îÀÇ ¾ÆÀÌÅÛ È°¼ºÈ­
+        // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È°ï¿½ï¿½È­
         bool isItemEnable = collision.tag == "knife" || collision.tag == "lock";
         item.SetActive(isItemEnable);
 
         Debug.Log(isItemEnable);
 
-        //  ¾ÆÀÌÅÛÀ» ¸ÔÀº°Ô ¾Æ´Ï¸é ¾Æ¹« ÀÛ¾÷µµ ÇÏÁö ¾ÊÀ½
+        //  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´Ï¸ï¿½ ï¿½Æ¹ï¿½ ï¿½Û¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (!isItemEnable) return;
 
-        // ¸Ê¿¡ ÀÖ´Â ¾ÆÀÌÅÛ »ç¶óÁö°Ô Ã³¸®
+        // ï¿½Ê¿ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
         collision.gameObject.SetActive(false);
 
         SpriteRenderer spriteRenderer = item.GetComponent<SpriteRenderer>();
@@ -105,11 +112,11 @@ public class PlayerController : MonoBehaviour
         {
             case "knife":
                 spriteRenderer.sprite = itemKnife;
-                // Ä®¿¡ ´ëÇÑ Á¤º¸·Î °»½Å
+                // Ä®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                 break;
             case "lock":
                 spriteRenderer.sprite = itemLock;
-                // ÀÚ¹°¼è¿¡ ´ëÇÑ Á¤º¸·Î °»½Å
+                // ï¿½Ú¹ï¿½ï¿½è¿¡ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                 break;
         }
     }
@@ -122,7 +129,7 @@ public class PlayerController : MonoBehaviour
             item.SetActive(false);
         }
     }
-
+    
     void LockTheDoor(Collider2D collision)
     {
         if (item.activeSelf && collision.tag == "door")
@@ -137,5 +144,17 @@ public class PlayerController : MonoBehaviour
         GetItem(collision);
         AttackToEnemy(collision);
         LockTheDoor(collision);
+    }
+    
+    void UpdateMovableDirection()
+    {
+        Vector3 raw = transform.position;
+        Vector3Int pos = new Vector3Int((int) raw.x, (int) raw.y, (int) raw.z);
+        Vector2Int index = Grid.GetNodeGridIndex(pos);
+
+        CanMoveUp = Grid.GetNodeType(index.x, index.y + 1) == NodeTypes.Ground;
+        CanMoveDown = Grid.GetNodeType(index.x, index.y - 1) == NodeTypes.Ground;
+        CanMoveLeft = Grid.GetNodeType(index.x - 1, index.y) == NodeTypes.Ground;
+        CanMoveRight = Grid.GetNodeType(index.x + 1, index.y) == NodeTypes.Ground;
     }
 }
