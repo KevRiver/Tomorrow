@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Level1.unity
     guid: 814c3eb6956186740a913523d74a3c59
+  - enabled: 1
+    path: Assets/Scenes/MurdererKillingScene.unity
+    guid: 864af94419deaa547938f417abea723f
   m_configObjects: {}
