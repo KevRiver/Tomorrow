@@ -46,7 +46,6 @@ GameObject:
   - component: {fileID: 8049362634530446703}
   - component: {fileID: 8049362634530446702}
   - component: {fileID: 8049362634530446701}
-  - component: {fileID: 5805597904643659923}
   m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
@@ -267,34 +266,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &5805597904643659923
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8049362634530446613}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d84c8c46f24bc44689ed5fe91d7423b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Event: {fileID: 11400000, guid: c95ff78f6f3cf184cb8fe8a011744ff6, type: 2}
-  Response:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8049362634530446608}
-        m_TargetAssemblyTypeName: ModelController, Assembly-CSharp
-        m_MethodName: Hop
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: '"Hop"'
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &8049362635294008369
 GameObject:
   m_ObjectHideFlags: 0
@@ -344,6 +315,7 @@ MonoBehaviour:
   MoveSpeed: 5
   PlayerFaceDirection: {x: 0, y: -1}
   movePoint: {fileID: 8049362633836749996}
+  PlayerModelController: {fileID: 8049362634530446608}
   item: {fileID: 0}
   LeftItem: {fileID: 0}
   RightItem: {fileID: 0}

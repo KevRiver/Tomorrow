@@ -148,9 +148,11 @@ MonoBehaviour:
   MoveSpeed: 5
   JumpSpeed: 2.5
   Grid: {fileID: 0}
+  IsMovedThisTurn: 0
   Model: {fileID: 2920696560707301407}
   modelcontroller: {fileID: 2920696560707301405}
   Target: {fileID: 0}
+  MurdererMove: {fileID: 11400000, guid: 29b4f9b00fa6b364db08e5d19add9557, type: 2}
 --- !u!114 &3941714260249211424
 MonoBehaviour:
   m_ObjectHideFlags: 0

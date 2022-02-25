@@ -18,6 +18,9 @@ public class MurdererController : MonoBehaviour
     public ModelController modelcontroller;
 
     [Header("Target")] public Transform Target;
+
+    [Header("Murderer Events")] public GameEvent MurdererMove;
+    
     private Astar _pathFinder;
     
     private Vector2Int _start;
@@ -39,7 +42,11 @@ public class MurdererController : MonoBehaviour
 
         List<Node> path = _pathFinder.CreatePath(Grid.NodeGrid, _start, _end, 1);
 
-        if (path is null) return;
+        if (path is null)
+        {
+            Grid.MurderersMoveCount += 1;
+            return;
+        }
 
         _nextStep = new Vector2Int(path[0].X, path[0].Y);
         int dx = (int)_nextStep.x - _start.x;
@@ -52,7 +59,7 @@ public class MurdererController : MonoBehaviour
         if (dy < 0) modelcontroller.FaceDown();
         if (dy > 0) modelcontroller.FaceUp();
         
-        StartCoroutine(MoveAndNotifyMovement());
+        StartCoroutine(IMove());
     }
 
     private void SetStart()
@@ -69,11 +76,6 @@ public class MurdererController : MonoBehaviour
         _end = Grid.GetNodeGridIndex(pos);
     }
     
-    private IEnumerator MoveAndNotifyMovement()
-    {
-        yield return StartCoroutine(IMove());
-        Grid.MurderersFinishedMove += 1;
-    }
     private IEnumerator IMove()
     {
         float timeElapsed = 0;

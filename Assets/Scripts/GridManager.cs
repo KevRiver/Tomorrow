@@ -27,7 +27,7 @@ public class GridManager : MonoBehaviour
     public GameObject Player;
     private PlayerController _playerController;
     public Dictionary<int, GameObject> Murderers = new Dictionary<int, GameObject>();
-    public int MurderersFinishedMove = 0;
+    public int MurderersMoveCount = 0;
 
     public Astar PathFinder;
     new Camera camera;
@@ -62,7 +62,7 @@ public class GridManager : MonoBehaviour
         CreateNodeGrid();
         PathFinder = new Astar(groundBounds.size.x, groundBounds.size.y);
     }
-    
+
     /// <summary>
     /// Ground 타일맵을 기준으로 장애물, 상호작용가능 타일맵에 있는 오브젝트의 위치를 변환.
     /// 변환된 위치를 하나의 노드 배열에 저장
@@ -135,7 +135,7 @@ public class GridManager : MonoBehaviour
             GameObject entity = _entities[i].gameObject;
             if (entity.CompareTag("Murderer"))
             {
-                Murderers[i] = entity;
+                Murderers.Add(i, entity);
             }
             else if (entity.CompareTag("Player"))
             {
@@ -250,52 +250,4 @@ public class GridManager : MonoBehaviour
         if (x < 0 || x >= groundBounds.size.x || y < 0 || y >= groundBounds.size.y) return NodeTypes.None;
         return NodeGrid[x, y].nodeType;
     }
-
-    // public void ProcessEntityInteraction()
-    // {
-    //     Vector3 playerWorldPos = Player.transform.position;
-    //     Vector2Int playerGridPos = GetNodeGridIndex(playerWorldPos);
-    //
-    //     foreach (var murderer in Murderers)
-    //     {
-    //         Vector3 murdererWorldPos = murderer.Value.transform.position;
-    //         Vector2Int murdererGridPos = GetNodeGridIndex(murdererWorldPos);
-    //         
-    //         if (playerGridPos.Equals(murdererGridPos))
-    //         {
-    //             PlayerMurdered.Raise();
-    //             Debug.Log("Player Died");
-    //             return;
-    //         }
-    //     }
-    //
-    //     Dictionary<int, List<int>> murdererLocations = new Dictionary<int, List<int>>();
-    //     foreach (var murderer in Murderers)
-    //     {
-    //         int id = murderer.Key;
-    //         Vector3 worldPos = murderer.Value.transform.position;
-    //         Vector2Int gridPos = GetNodeGridIndex(worldPos);
-    //         int key = gridPos.GetHashCode();
-    //
-    //         bool keyExist = murdererLocations.TryGetValue(key, out var list);
-    //         if(!keyExist) murdererLocations.Add(key, new List<int>(){id});
-    //         else murdererLocations[key].Add(id);
-    //     }
-    //
-    //     foreach (var location in murdererLocations)
-    //     {
-    //         List<int> murdererIds = location.Value;
-    //         if (murdererIds.Count > 1)
-    //         {
-    //             for (int i = 0; i < murdererIds.Count; i++)
-    //             {
-    //                 int id = murdererIds[i];
-    //                 GameObject obj = Murderers[id];
-    //                 obj.SetActive(false);
-    //
-    //                 Murderers.Remove(id);
-    //             }
-    //         }
-    //     }
-    // }
 }

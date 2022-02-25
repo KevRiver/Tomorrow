@@ -11,6 +11,8 @@ public class PlayerController : MonoBehaviour
     
     public Transform movePoint;
 
+    public ModelController PlayerModelController;
+
     public GameObject item, LeftItem, RightItem;
     public Sprite itemKnife, itemLock;
 
@@ -172,6 +174,8 @@ public class PlayerController : MonoBehaviour
             movePoint.position += new Vector3(dir, 0f, 0f);
             
             if (!(_grabbedMovableObj is null)) _grabbedMovableObj.MoveObject(new Vector2(dir, 0f));
+
+            PlayerModelController.Hop();
             
             hasPlayerMoved = true;
             
@@ -214,6 +218,8 @@ public class PlayerController : MonoBehaviour
             
             if (!(_grabbedMovableObj is null)) _grabbedMovableObj.MoveObject(new Vector2(0f, dir));
 
+            PlayerModelController.Hop();
+            
             hasPlayerMoved = true;
 
             // item.GetComponent<SpriteRenderer>().flipX = isVerticalInput;
