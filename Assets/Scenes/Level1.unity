@@ -1950,6 +1950,18 @@ PrefabInstance:
       propertyPath: Grid
       value: 
       objectReference: {fileID: 1811886312}
+    - target: {fileID: 8049362635294008335, guid: 4a63ff87106f8e5459718774668f56fb, type: 3}
+      propertyPath: item
+      value: 
+      objectReference: {fileID: 426447840}
+    - target: {fileID: 8049362635294008335, guid: 4a63ff87106f8e5459718774668f56fb, type: 3}
+      propertyPath: LeftItem
+      value: 
+      objectReference: {fileID: 1015812833}
+    - target: {fileID: 8049362635294008335, guid: 4a63ff87106f8e5459718774668f56fb, type: 3}
+      propertyPath: RightItem
+      value: 
+      objectReference: {fileID: 188234559}
     - target: {fileID: 8049362635294008369, guid: 4a63ff87106f8e5459718774668f56fb, type: 3}
       propertyPath: m_Name
       value: Player
@@ -2892,11 +2904,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3914348450132361700, guid: 13ffb11161a539142a7bec6abd7e1c20, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 10.77
+      value: 10.821
       objectReference: {fileID: 0}
     - target: {fileID: 3914348450132361700, guid: 13ffb11161a539142a7bec6abd7e1c20, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.61
+      value: 2.576
       objectReference: {fileID: 0}
     - target: {fileID: 3914348450132361700, guid: 13ffb11161a539142a7bec6abd7e1c20, type: 3}
       propertyPath: m_LocalPosition.z
