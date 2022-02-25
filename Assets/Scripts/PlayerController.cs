@@ -38,6 +38,8 @@ public class PlayerController : MonoBehaviour
     private float _horizontalInput;
     private float _verticalInput;
 
+    private bool hasPlayerMoved = false;
+
     [HideInInspector] public bool StoredInGridManger = false;
 
     private void Start()
@@ -53,6 +55,12 @@ public class PlayerController : MonoBehaviour
 
         if (Vector3.Distance(transform.position, movePoint.position) > MOVE_THRESHOLD) return;
         
+        if (hasPlayerMoved)
+        {
+            PlayerMove.Raise();
+            hasPlayerMoved = false;
+        }
+
         UpdateValidDirection();
         
         HandleGrabInput();
@@ -134,17 +142,6 @@ public class PlayerController : MonoBehaviour
         _verticalInput = !_verticalInputLock ? Input.GetAxisRaw("Vertical") : 0f;
     }
 
-    // private void CheckPreventedInputAxis()
-    // {
-    //     _horizontalInputLock = IsGrabbing &&
-    //                            (PlayerFaceDirection.Equals(Vector2.up) || PlayerFaceDirection.Equals(Vector2.down));
-    //     _verticalInputLock = IsGrabbing &&
-    //                          (PlayerFaceDirection.Equals(Vector2.left) || PlayerFaceDirection.Equals(Vector2.right));
-    //
-    //     _horizontalInput = !_horizontalInputLock ? Input.GetAxisRaw("Horizontal") : 0f;
-    //     _verticalInput = !_verticalInputLock ? Input.GetAxisRaw("Vertical") : 0f;
-    // }
-
     private void HandleInput()
     {
         float dir = 0;
@@ -176,7 +173,7 @@ public class PlayerController : MonoBehaviour
             
             if (!(_grabbedMovableObj is null)) _grabbedMovableObj.MoveObject(new Vector2(dir, 0f));
             
-            PlayerMove.Raise();
+            hasPlayerMoved = true;
             
             // item.GetComponent<SpriteRenderer>().flipX = (horizontalInput >= 1f);
             //
@@ -216,8 +213,8 @@ public class PlayerController : MonoBehaviour
             movePoint.position += new Vector3(0f, dir, 0f);
             
             if (!(_grabbedMovableObj is null)) _grabbedMovableObj.MoveObject(new Vector2(0f, dir));
-            
-            PlayerMove.Raise();
+
+            hasPlayerMoved = true;
 
             // item.GetComponent<SpriteRenderer>().flipX = isVerticalInput;
             //
