@@ -19,13 +19,13 @@ public class ModelController : MonoBehaviour
 
     public void FaceLeft()
     {
-        _renderer.flipX = false;
+        _renderer.flipX = true;
         _renderer.sprite = Sprites[1];
     }
 
     public void FaceRight()
     {
-        _renderer.flipX = true;
+        _renderer.flipX = false;
         _renderer.sprite = Sprites[1];
     }
 
