@@ -86,6 +86,13 @@ public class PlayerController : MonoBehaviour
          */
     }
 
+    public string getPlayerItemName()
+    {
+        Sprite sprite = item.GetComponent<SpriteRenderer>().sprite;
+        if (sprite == null) return "";
+        else return sprite.name;
+    }
+
     void GetItem(Collider2D collision)
     {
         // 플레이어의 아이템 활성화
