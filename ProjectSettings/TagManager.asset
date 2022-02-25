@@ -10,6 +10,7 @@ TagManager:
   - Light
   - Interactable
   - Murderer
+  - free_hand
   layers:
   - Default
   - TransparentFX

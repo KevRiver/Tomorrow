@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     public ModelController PlayerModelController;
 
     public GameObject item, LeftItem, RightItem;
+    // player.item.tag => free_hand / knife / lock
     public Sprite itemKnife, itemLock;
 
     [Header("Neighbor Tile Detection")] 
@@ -178,13 +179,13 @@ public class PlayerController : MonoBehaviour
             PlayerModelController.Hop();
             
             hasPlayerMoved = true;
-            
-            // item.GetComponent<SpriteRenderer>().flipX = (horizontalInput >= 1f);
-            //
-            // item.transform.position = (horizontalInput >= 1)? RightItem.transform.position : LeftItem.transform.position;
-            //
-            // item.GetComponent<SpriteRenderer>().sortingOrder = 1;
-            
+
+            item.GetComponent<SpriteRenderer>().flipX = (dir > 0);
+
+            item.transform.position = (dir > 0) ? RightItem.transform.position : LeftItem.transform.position;
+
+            item.GetComponent<SpriteRenderer>().sortingOrder = 1;
+
         }
         else if (Math.Abs(Input.GetAxisRaw("Vertical")) >= 1f)
         {
@@ -222,11 +223,12 @@ public class PlayerController : MonoBehaviour
             
             hasPlayerMoved = true;
 
-            // item.GetComponent<SpriteRenderer>().flipX = isVerticalInput;
-            //
-            // item.transform.position = (verticalInput >= 1) ? RightItem.transform.position : LeftItem.transform.position;
-            //
-            // item.GetComponent<SpriteRenderer>().sortingOrder = Convert.ToInt32(!isVerticalInput);
+            // vertical input이면 아이템의 order layer를 0으로, 아니면 1로 지정
+            item.GetComponent<SpriteRenderer>().flipX = (dir > 0);
+
+            item.transform.position = (dir > 0) ? RightItem.transform.position : LeftItem.transform.position;
+
+            item.GetComponent<SpriteRenderer>().sortingOrder = Convert.ToInt32(!(dir > 0));
         }
     }
 
@@ -239,50 +241,37 @@ public class PlayerController : MonoBehaviour
         if (!(obj is null)) m = obj.CompareTag("Movable") ? obj.GetComponent<Movable>() : null;
         return m;
     }
-    
-    
-    void SetItemPosition(bool isVertical)
-    {
-        /*
-         horizontal >= 1�̸�
-            flipX = true
-            rightItem
-         else
-            flipX = false
-            leftItem
 
-         vertical >= 1�̸�
-            flipX = true
-            rightItem
-         else
-            leftItem
-         */
-    }
-    
     void GetItem(Collider2D collision)
     {
-        // �÷��̾��� ������ Ȱ��ȭ
+        // 플레이어의 아이템 활성화
         bool isItemEnable = collision.tag == "knife" || collision.tag == "lock";
         item.SetActive(isItemEnable);
 
         Debug.Log(isItemEnable);
 
-        //  �������� ������ �ƴϸ� �ƹ� �۾��� ���� ����
-        if (!isItemEnable) return;
+        //  아이템을 먹은게 아니면 아무 작업도 하지 않음
+        if (!isItemEnable)
+        {
+            item.tag = "free_hand";
+            return;
+        }
 
-        // �ʿ� �ִ� ������ ������� ó��
+        // 맵에 있는 아이템 사라지게 처리
         collision.gameObject.SetActive(false);
 
         SpriteRenderer spriteRenderer = item.GetComponent<SpriteRenderer>();
-        switch(collision.tag)
+        switch (collision.tag)
         {
             case "knife":
                 spriteRenderer.sprite = itemKnife;
-                // Į�� ���� ������ ����
+                item.tag = "knife";
+                // 칼에 대한 정보로 갱신
                 break;
             case "lock":
                 spriteRenderer.sprite = itemLock;
-                // �ڹ��迡 ���� ������ ����
+                item.tag = "lock";
+                // 자물쇠에 대한 정보로 갱신
                 break;
         }
     }
@@ -292,15 +281,17 @@ public class PlayerController : MonoBehaviour
         if (item.activeSelf && collision.tag == "enemy")
         {
             Destroy(collision.gameObject);
+            item.tag = "free_hand";
             item.SetActive(false);
         }
     }
-    
+
     void LockTheDoor(Collider2D collision)
     {
         if (item.activeSelf && collision.tag == "door")
         {
             // lock the door
+            item.tag = "free_hand";
             item.SetActive(false);
         }
     }
