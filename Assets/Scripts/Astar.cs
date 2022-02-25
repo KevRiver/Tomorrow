@@ -6,12 +6,12 @@ using UnityEngine;
 
 public class Astar
 {
-    public Spot[,] Spots;
-    public Astar(Vector3Int[,] grid, int columns, int rows)
+    public Node[,] Nodes;
+    public Astar(int columns, int rows)
     {
-        Spots = new Spot[columns, rows];
+        Nodes = new Node[columns, rows];
     }
-    private bool IsValidPath(Vector3Int[,] grid, Spot start, Spot end)
+    private bool IsValidPath(Node start, Node end)
     {
         if (end == null)
             return false;
@@ -21,22 +21,19 @@ public class Astar
             return false;
         return true;
     }
-    public List<Spot> CreatePath(Vector3Int[,] grid, Vector2Int start, Vector2Int end, int length)
+    public List<Node> CreatePath(Node[,] org, Vector2Int start, Vector2Int end, int length)
     {
-        //if (!IsValidPath(grid, start, end))
-        //     return null;
-
-        Spot End = null;
-        Spot Start = null;
-        var columns = Spots.GetUpperBound(0) + 1;
-        var rows = Spots.GetUpperBound(1) + 1;
-        Spots = new Spot[columns, rows];
+        Node End = null;
+        Node Start = null;
+        var columns = Nodes.GetUpperBound(0) + 1;
+        var rows = Nodes.GetUpperBound(1) + 1;
+        Nodes = new Node[columns, rows];
 
         for (int i = 0; i < columns; i++)
         {
             for (int j = 0; j < rows; j++)
             {
-                Spots[i, j] = new Spot(grid[i, j].x, grid[i, j].y, grid[i, j].z);
+                Nodes[i, j] = new Node(org[i, j].X, org[i, j].Y, org[i, j].Height, org[i, j].nodeType);
             }
         }
 
@@ -44,17 +41,18 @@ public class Astar
         {
             for (int j = 0; j < rows; j++)
             {
-                Spots[i, j].AddNeighboors(Spots, i, j);
-                if (Spots[i, j].X == start.x && Spots[i, j].Y == start.y)
-                    Start = Spots[i, j];
-                else if (Spots[i, j].X == end.x && Spots[i, j].Y == end.y)
-                    End = Spots[i, j];
+                Nodes[i, j].AddNeighboors(Nodes, i, j);
+                if (Nodes[i, j].X == start.x && Nodes[i, j].Y == start.y)
+                    Start = Nodes[i, j];
+                else if (Nodes[i, j].X == end.x && Nodes[i, j].Y == end.y)
+                    End = Nodes[i, j];
             }
         }
-        if (!IsValidPath(grid, Start, End))
+        if (!IsValidPath(Start, End))
             return null;
-        List<Spot> OpenSet = new List<Spot>();
-        List<Spot> ClosedSet = new List<Spot>();
+        
+        List<Node> OpenSet = new List<Node>();
+        List<Node> ClosedSet = new List<Node>();
 
         OpenSet.Add(Start);
 
@@ -74,7 +72,7 @@ public class Astar
             //Found the path, creates and returns the path
             if (End != null && OpenSet[winner] == End)
             {
-                List<Spot> Path = new List<Spot>();
+                List<Node> Path = new List<Node>();
                 var temp = current;
                 Path.Add(temp);
                 while (temp.previous != null)
@@ -130,7 +128,7 @@ public class Astar
         return null;
     }
 
-    private int Heuristic(Spot a, Spot b)
+    private int Heuristic(Node a, Node b)
     {
         //manhattan
         var dx = Math.Abs(a.X - b.X);
@@ -153,7 +151,16 @@ public class Astar
         #endregion
     }
 }
-public class Spot
+
+public enum NodeTypes
+{
+    None,
+    Ground,
+    Obstacle,
+    Movable,
+    Interactable
+}
+public class Node
 {
     public int X;
     public int Y;
@@ -161,28 +168,33 @@ public class Spot
     public int G;
     public int H;
     public int Height = 0;
-    public List<Spot> Neighboors;
-    public Spot previous = null;
-    public Spot(int x, int y, int height)
+    public List<Node> Neighboors;
+    public Node previous = null;
+    public NodeTypes nodeType = NodeTypes.None;
+    public Node(int x, int y, int height, NodeTypes type)
     {
         X = x;
         Y = y;
         F = 0;
         G = 0;
         H = 0;
-        Neighboors = new List<Spot>();
+        Neighboors = new List<Node>();
         Height = height;
+        nodeType = type;
     }
-    public void AddNeighboors(Spot[,] grid, int x, int y)
+    public void AddNeighboors(Node[,] map, int x, int y)
     {
-        if (x < grid.GetUpperBound(0))
-            Neighboors.Add(grid[x + 1, y]);
-        if (x > 0)
-            Neighboors.Add(grid[x - 1, y]);
-        if (y < grid.GetUpperBound(1))
-            Neighboors.Add(grid[x, y + 1]);
-        if (y > 0)
-            Neighboors.Add(grid[x, y - 1]);
+        if (x < map.GetUpperBound(0) && map[x + 1, y].nodeType.Equals(NodeTypes.Ground))
+            Neighboors.Add(map[x + 1, y]);
+
+        if (x > 0 && map[x - 1, y].nodeType.Equals(NodeTypes.Ground))
+            Neighboors.Add(map[x - 1, y]);
+        
+        if (y < map.GetUpperBound(1) && map[x, y + 1].nodeType.Equals(NodeTypes.Ground))
+            Neighboors.Add(map[x, y + 1]);
+        
+        if (y > 0 && map[x, y - 1].nodeType.Equals(NodeTypes.Ground))
+            Neighboors.Add(map[x, y - 1]);
         #region diagonal
         //if (X > 0 && Y > 0)
         //    Neighboors.Add(grid[X - 1, Y - 1]);

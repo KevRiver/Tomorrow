@@ -46,6 +46,7 @@ GameObject:
   - component: {fileID: 8049362634530446703}
   - component: {fileID: 8049362634530446702}
   - component: {fileID: 8049362634530446701}
+  - component: {fileID: 5805597904643659923}
   m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
@@ -146,25 +147,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d84c8c46f24bc44689ed5fe91d7423b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Event: {fileID: 11400000, guid: 1b3c5f33face4444283efe9c596197db, type: 2}
+  Event: {fileID: 11400000, guid: 19c55fb772be6c345af395bedd7993ee, type: 2}
   Response:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 8049362634530446608}
         m_TargetAssemblyTypeName: ModelController, Assembly-CSharp
         m_MethodName: FaceLeft
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 8049362634530446608}
-        m_TargetAssemblyTypeName: ModelController, Assembly-CSharp
-        m_MethodName: Hop
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -186,25 +175,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d84c8c46f24bc44689ed5fe91d7423b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Event: {fileID: 11400000, guid: f85cc55a32fad0040a44661930b55367, type: 2}
+  Event: {fileID: 11400000, guid: 9aa9dc7abe1938341bb560f215424334, type: 2}
   Response:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 8049362634530446608}
         m_TargetAssemblyTypeName: ModelController, Assembly-CSharp
         m_MethodName: FaceRight
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 8049362634530446608}
-        m_TargetAssemblyTypeName: ModelController, Assembly-CSharp
-        m_MethodName: Hop
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -226,25 +203,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d84c8c46f24bc44689ed5fe91d7423b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Event: {fileID: 11400000, guid: 6c7566dd11ebf3446a72b471a74abecd, type: 2}
+  Event: {fileID: 11400000, guid: 6f8dc74aaba5d514389dfb578b63c9a4, type: 2}
   Response:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 8049362634530446608}
         m_TargetAssemblyTypeName: ModelController, Assembly-CSharp
         m_MethodName: FaceUp
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 8049362634530446608}
-        m_TargetAssemblyTypeName: ModelController, Assembly-CSharp
-        m_MethodName: Hop
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -266,25 +231,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d84c8c46f24bc44689ed5fe91d7423b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Event: {fileID: 11400000, guid: 0d85e55742cef944aa7dd835e86dfa96, type: 2}
+  Event: {fileID: 11400000, guid: 0f561b29dfb86de409a528cb5516cd72, type: 2}
   Response:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 8049362634530446608}
         m_TargetAssemblyTypeName: ModelController, Assembly-CSharp
         m_MethodName: FaceDown
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 8049362634530446608}
-        m_TargetAssemblyTypeName: ModelController, Assembly-CSharp
-        m_MethodName: Hop
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -313,6 +266,34 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &5805597904643659923
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8049362634530446613}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d84c8c46f24bc44689ed5fe91d7423b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Event: {fileID: 11400000, guid: c95ff78f6f3cf184cb8fe8a011744ff6, type: 2}
+  Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 8049362634530446608}
+        m_TargetAssemblyTypeName: ModelController, Assembly-CSharp
+        m_MethodName: Hop
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: '"Hop"'
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &8049362635294008369
 GameObject:
   m_ObjectHideFlags: 0
@@ -360,11 +341,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 5
   movePoint: {fileID: 8049362633836749996}
+  Grid: {fileID: 0}
   CanMoveLeft: 0
   CanMoveRight: 0
   CanMoveUp: 0
   CanMoveDown: 0
-  MoveLeft: {fileID: 11400000, guid: 1b3c5f33face4444283efe9c596197db, type: 2}
-  MoveRight: {fileID: 11400000, guid: f85cc55a32fad0040a44661930b55367, type: 2}
-  MoveUp: {fileID: 11400000, guid: 6c7566dd11ebf3446a72b471a74abecd, type: 2}
-  MoveDown: {fileID: 11400000, guid: 0d85e55742cef944aa7dd835e86dfa96, type: 2}
+  FaceLeft: {fileID: 11400000, guid: 19c55fb772be6c345af395bedd7993ee, type: 2}
+  FaceRight: {fileID: 11400000, guid: 9aa9dc7abe1938341bb560f215424334, type: 2}
+  FaceUp: {fileID: 11400000, guid: 6f8dc74aaba5d514389dfb578b63c9a4, type: 2}
+  FaceDown: {fileID: 11400000, guid: 0f561b29dfb86de409a528cb5516cd72, type: 2}
+  Move: {fileID: 11400000, guid: c95ff78f6f3cf184cb8fe8a011744ff6, type: 2}
+  Drag: {fileID: 11400000, guid: 7b69a5caed659ff44b78532f4fabf2c3, type: 2}
