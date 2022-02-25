@@ -2,9 +2,11 @@
 
 using System;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class PlayerController : MonoBehaviour
 {
+
     const float MOVE_THRESHOLD = 0.0001f;
     public float moveSpeed = 5f;
     public Transform movePoint;
@@ -16,15 +18,30 @@ public class PlayerController : MonoBehaviour
 
     public GameObject item, LeftItem, RightItem;
     public Sprite itemKnife, itemLock;
-    // Start is called before the first frame update
+
+
+    #region Movable object와 interact하기 위한 variables
+    float adjSensorSize = 0.5f;   //근처 Grid에 물건이 있는지 체크하는데 사용되는 센서 사이즈.
+    Movable[] adjMovables; // 차례대로 상, 하, 좌, 우
+
+    Movable grappbedMovable;
+    int movableSelector = 0; // 플레어의 위치에 여러개의 movable이 있을 수 있으니까. 여러개의 movable중 하나를 고를 수 있게 하는 counter.
+
+    #endregion
+    private void Awake()
+    {
+        adjMovables = new Movable[4];
+    }
+
     void Start()
     {
         movePoint.parent = null;
     }
 
-    // Update is called once per frame
     void Update()
     {
+
+
         transform.position = Vector3.MoveTowards(transform.position, movePoint.position, moveSpeed * Time.deltaTime);
         
         if (Vector3.Distance(transform.position, movePoint.position) > MOVE_THRESHOLD) return;
@@ -46,6 +63,11 @@ public class PlayerController : MonoBehaviour
             item.transform.position = (horizontalInput >= 1)? RightItem.transform.position : LeftItem.transform.position;
 
             item.GetComponent<SpriteRenderer>().sortingOrder = 1;
+
+            if (grappbedMovable != null) grappbedMovable.MoveObject(new Vector2(Input.GetAxisRaw("Horizontal"), 0f));
+
+
+
         }
         else if (Math.Abs(Input.GetAxisRaw("Vertical")) >= 1f)
         {
@@ -65,8 +87,92 @@ public class PlayerController : MonoBehaviour
             item.transform.position = (verticalInput >= 1) ? RightItem.transform.position : LeftItem.transform.position;
 
             item.GetComponent<SpriteRenderer>().sortingOrder = Convert.ToInt32(!isVerticalInput);
+
+            if (grappbedMovable != null) grappbedMovable.MoveObject(new Vector2(0f, Input.GetAxisRaw("Vertical")));
+
         }
+
+        updateAdjMovable();
+        InteractionUpdate();
+
+
+        
     }
+
+    void InteractionUpdate()
+    {
+        if (Input.GetButtonDown("Fire1"))
+        {
+            grappbedMovable = getAdjMovable();
+        }
+        else if (Input.GetButtonUp("Fire1"))
+        {
+            grappbedMovable = null;
+        }
+
+        if (!Input.GetButton("Fire1"))
+        {
+            grappbedMovable = null;
+        }
+
+
+
+
+    }
+
+    Movable getAdjMovable()
+    {
+        
+        for (int i = 0; i < 4; i++)
+        {
+            movableSelector = (movableSelector + 1) % 4;
+
+            if (adjMovables[movableSelector] != null)
+            {
+                Debug.Log(adjMovables[movableSelector]);
+                return adjMovables[movableSelector];
+            }
+
+        }
+        return null;
+    }
+
+    void updateAdjMovable()
+    {
+
+        Collider2D obj = Physics2D.OverlapCircle((Vector2)transform.position + Vector2.up, adjSensorSize);
+        if (obj != null && obj.CompareTag("Movable"))
+            adjMovables[0] = obj.GetComponent<Movable>();
+        else adjMovables[0] = null;
+
+        obj = Physics2D.OverlapCircle((Vector2)transform.position + Vector2.down, adjSensorSize);
+        if (obj != null && obj.CompareTag("Movable"))
+            adjMovables[1] = obj.GetComponent<Movable>();
+        else adjMovables[1] = null;
+
+        
+        obj = Physics2D.OverlapCircle((Vector2)transform.position + Vector2.left, adjSensorSize);
+        if (obj != null && obj.CompareTag("Movable"))
+            adjMovables[2] = obj.GetComponent<Movable>();
+        else adjMovables[2] = null;
+
+        obj = Physics2D.OverlapCircle((Vector2)transform.position + Vector2.right, adjSensorSize);
+        if (obj != null && obj.CompareTag("Movable"))
+            adjMovables[3] = obj.GetComponent<Movable>();
+        else adjMovables[3] = null;
+
+    }
+
+    bool areThereAdjMovables()
+    {
+        if (adjMovables[0] != null || adjMovables[1] != null ||
+            adjMovables[2] != null || adjMovables[3] != null) return true;
+
+        return false;
+    }
+
+
+
 
     void SetItemPosition(bool isVertical)
     {
@@ -137,5 +243,20 @@ public class PlayerController : MonoBehaviour
         GetItem(collision);
         AttackToEnemy(collision);
         LockTheDoor(collision);
+    }
+
+
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+
+        
+        Gizmos.DrawWireSphere(transform.position + Vector3.up, adjSensorSize);
+        Gizmos.DrawWireSphere(transform.position + Vector3.down, adjSensorSize);
+        Gizmos.DrawWireSphere(transform.position + Vector3.left, adjSensorSize);
+        Gizmos.DrawWireSphere(transform.position + Vector3.right, adjSensorSize);
+
+
     }
 }
