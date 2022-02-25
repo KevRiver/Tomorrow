@@ -1273,6 +1273,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1896564384}
   - component: {fileID: 1896564385}
+  - component: {fileID: 1896564386}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1314,3 +1315,23 @@ MonoBehaviour:
   MoveRight: {fileID: 11400000, guid: f85cc55a32fad0040a44661930b55367, type: 2}
   MoveUp: {fileID: 11400000, guid: 6c7566dd11ebf3446a72b471a74abecd, type: 2}
   MoveDown: {fileID: 11400000, guid: 0d85e55742cef944aa7dd835e86dfa96, type: 2}
+--- !u!114 &1896564386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1896564383}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8cc28db81fa982d4b80514c46d4262ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gridStartPoint: {x: -4, y: -4}
+  gridEndPoint: {x: 3, y: 3}
+  cellSize: 1
+  collisionCheckSensorSize: {x: 0.7, y: 0.7}
+  layerTocheckCollide:
+    serializedVersion: 2
+    m_Bits: 0
+  GizmoDraw: 1
