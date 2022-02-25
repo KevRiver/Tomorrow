@@ -90,11 +90,11 @@ public class PlayerController : MonoBehaviour
 
             movePoint.position += new Vector3(dir, 0f, 0f);
             
-            // item.GetComponent<SpriteRenderer>().flipX = (horizontalInput >= 1f);
-            //
-            // item.transform.position = (horizontalInput >= 1)? RightItem.transform.position : LeftItem.transform.position;
-            //
-            // item.GetComponent<SpriteRenderer>().sortingOrder = 1;
+             item.GetComponent<SpriteRenderer>().flipX = (horizontalInput >= 1f);
+            
+             item.transform.position = (horizontalInput >= 1)? RightItem.transform.position : LeftItem.transform.position;
+            
+             item.GetComponent<SpriteRenderer>().sortingOrder = 1;
 
             if (_grabbedMovableObj != null) _grabbedMovableObj.MoveObject(new Vector2(Input.GetAxisRaw("Horizontal"), 0f));
 
@@ -133,11 +133,11 @@ public class PlayerController : MonoBehaviour
             // vertical input�̸� �������� order layer�� 0����, �ƴϸ� 1�� ����
             bool isVerticalInput = (verticalInput >= 1f);
 
-            // item.GetComponent<SpriteRenderer>().flipX = isVerticalInput;
-            //
-            // item.transform.position = (verticalInput >= 1) ? RightItem.transform.position : LeftItem.transform.position;
-            //
-            // item.GetComponent<SpriteRenderer>().sortingOrder = Convert.ToInt32(!isVerticalInput);
+             item.GetComponent<SpriteRenderer>().flipX = isVerticalInput;
+            
+             item.transform.position = (verticalInput >= 1) ? RightItem.transform.position : LeftItem.transform.position;
+            
+             item.GetComponent<SpriteRenderer>().sortingOrder = Convert.ToInt32(!isVerticalInput);
 
             if (_grabbedMovableObj != null) _grabbedMovableObj.MoveObject(new Vector2(0f, Input.GetAxisRaw("Vertical")));
 
