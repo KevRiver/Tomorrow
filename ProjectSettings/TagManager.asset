@@ -7,6 +7,7 @@ TagManager:
   - knife
   - lock
   - Movable
+  - Murderer
   layers:
   - Default
   - TransparentFX

@@ -71,7 +71,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 3
+  m_SortingOrder: 4
   m_Sprite: {fileID: -4075436770797835795, guid: ccad6719674025a428826a6fdf0372bc, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -110,9 +110,10 @@ GameObject:
   m_Component:
   - component: {fileID: 2920696561926907471}
   - component: {fileID: 2920696561926907470}
+  - component: {fileID: 3941714260249211424}
   m_Layer: 0
   m_Name: Murderer
-  m_TagString: Untagged
+  m_TagString: Murderer
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -150,3 +151,31 @@ MonoBehaviour:
   Model: {fileID: 2920696560707301407}
   modelcontroller: {fileID: 2920696560707301405}
   Target: {fileID: 0}
+--- !u!114 &3941714260249211424
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2920696561926907465}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d84c8c46f24bc44689ed5fe91d7423b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Event: {fileID: 11400000, guid: c95ff78f6f3cf184cb8fe8a011744ff6, type: 2}
+  Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2920696561926907470}
+        m_TargetAssemblyTypeName: MurdererController, Assembly-CSharp
+        m_MethodName: Move
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2

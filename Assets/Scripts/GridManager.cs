@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -9,13 +10,24 @@ using UnityEngine.Tilemaps;
 [ExecuteInEditMode]
 public class GridManager : MonoBehaviour
 {
-    public Tilemap ground;
-    public Tilemap entities;
-    public Tilemap obstacles;
-    public Tilemap interactables;
+    public GameEvent PlayerMurdered;
     
-    public Vector3Int[,] spots;
+    public Tilemap GroundTilemap;
+    public Tilemap ObstacleTilemap;
+    public Transform EntityTilemap;
+    public Transform InteractableTilemap;
+    public Transform MovableTilemap;
+    
+    [SerializeField] private List<Transform> _entities;
+    [SerializeField] private List<Transform> _interactables;
+    [SerializeField] private List<Transform> _movable;
+    
     public Node[,] NodeGrid;
+
+    public GameObject Player;
+    private PlayerController _playerController;
+    public Dictionary<int, GameObject> Murderers = new Dictionary<int, GameObject>();
+    public int MurderersFinishedMove = 0;
 
     public Astar PathFinder;
     new Camera camera;
@@ -26,46 +38,36 @@ public class GridManager : MonoBehaviour
     
     [Header("Tilemap Bounds")]
     [SerializeField] private BoundsInt groundBounds;
-    [SerializeField] private BoundsInt entityBounds;
     [SerializeField] private BoundsInt obstacleBounds;
-    [SerializeField] private BoundsInt interactableBounds;
-    
-    void Start()
+
+    void Awake()
     {
-        ground.CompressBounds();
-        groundBounds = ground.cellBounds;
+        GroundTilemap.CompressBounds();
+        groundBounds = GroundTilemap.cellBounds;
         
-        entities.CompressBounds();
-        entityBounds = entities.cellBounds;
+        ObstacleTilemap.CompressBounds();
+        obstacleBounds = ObstacleTilemap.cellBounds;
+
+        _entities = EntityTilemap.GetComponentsInChildren<Transform>().ToList();
+        _entities.RemoveAt(0);
         
-        obstacles.CompressBounds();
-        obstacleBounds = obstacles.cellBounds;
+        _interactables = InteractableTilemap.GetComponentsInChildren<Transform>().ToList();
+        _interactables.RemoveAt(0);
         
-        interactables.CompressBounds();
-        interactableBounds = interactables.cellBounds;
-        
+        _movable = MovableTilemap.GetComponentsInChildren<Transform>().ToList();
+        _movable.RemoveAt(0);
+
         camera = Camera.main;
         
-        CreateNodeArrayTilemaps();
+        CreateNodeGrid();
         PathFinder = new Astar(groundBounds.size.x, groundBounds.size.y);
     }
-    private void Update()
-    {
-        if (Input.GetMouseButton(0))
-        {
-            Vector3 world = camera.ScreenToWorldPoint(Input.mousePosition);
-            curGridPos = ground.WorldToCell(world);
-            if (curGridPos.x < 0 || curGridPos.x >= groundBounds.size.x || curGridPos.y < 0 ||
-                curGridPos.y >= groundBounds.size.y) return;
-            curTileType = NodeGrid[curGridPos.x, curGridPos.y].nodeType.ToString();
-        }
-    }
-
+    
     /// <summary>
     /// Ground 타일맵을 기준으로 장애물, 상호작용가능 타일맵에 있는 오브젝트의 위치를 변환.
     /// 변환된 위치를 하나의 노드 배열에 저장
     /// </summary>
-    private void CreateNodeArrayTilemaps()
+    private void CreateNodeGrid()
     {
         NodeGrid = new Node[groundBounds.size.x, groundBounds.size.y];
         Vector3Int nodeGridOrg = new Vector3Int(groundBounds.xMin, groundBounds.yMin, 0);
@@ -75,7 +77,7 @@ public class GridManager : MonoBehaviour
         {
             for (int y = groundBounds.yMin, j = 0; j < groundBounds.size.y; y++, j++)
             {
-                if (ground.HasTile(new Vector3Int(x, y, 0)))
+                if (GroundTilemap.HasTile(new Vector3Int(x, y, 0)))
                 {
                     NodeGrid[i, j] = new Node(x, y, 0, NodeTypes.Ground);
                 }
@@ -93,7 +95,7 @@ public class GridManager : MonoBehaviour
         {
             for (int y = obstacleBounds.yMin, j = 0; j < obstacleBounds.size.y; y++, j++)
             {
-                if (!obstacles.HasTile(new Vector3Int(x, y, 0))) continue;
+                if (!ObstacleTilemap.HasTile(new Vector3Int(x, y, 0))) continue;
                 
                 int p = x - nodeGridOrg.x;
                 int q = y - nodeGridOrg.y;
@@ -102,36 +104,145 @@ public class GridManager : MonoBehaviour
         }
 
         #endregion
+        
+        #region Interactable Objects
+
+        for (int i = 0; i < _interactables.Count; i++)
+        {
+            Vector2Int index = GetNodeGridIndex(_movable[i].position);
+            NodeGrid[index.x, index.y].nodeType = NodeTypes.Interactable;
+        }
+
+        #endregion
+
+        #region Movable Objects
+
+        for (int i = 0; i < _movable.Count; i++)
+        {
+            Movable movable = _movable[i].GetComponent<Movable>();
+            movable.Grid = this;
+
+            Vector2Int index = GetNodeGridIndex(_movable[i].position);
+            NodeGrid[index.x, index.y].nodeType = NodeTypes.Movable;
+        }
+
+        #endregion
+
+        #region Entity Store
+
+        for (int i = 0; i < _entities.Count; i++)
+        {
+            GameObject entity = _entities[i].gameObject;
+            if (entity.CompareTag("Murderer"))
+            {
+                Murderers[i] = entity;
+            }
+            else if (entity.CompareTag("Player"))
+            {
+                Player = entity;
+            }
+        }
+
+        #endregion
     }
 
     public Vector2Int GetNodeGridIndex(Vector3 worldPosition)
     {
-        Vector3Int curNodeGridPos = ground.WorldToCell(worldPosition);
+        Vector3Int curNodeGridPos = GroundTilemap.WorldToCell(worldPosition);
         Vector2Int curIndex = new Vector2Int(curNodeGridPos.x, curNodeGridPos.y);
         return curIndex;
     }
-    
-    public bool CheckMovementValid(Vector3 pos, Vector2 dir)
-    {
-        Vector2Int index = GetNodeGridIndex(pos);
-        if (index.y < groundBounds.size.y && dir.Equals(Vector2.up))
-            return GetNodeType(index.x, index.y + 1) == NodeTypes.Ground;
-        
-        if (index.y > 0 && dir.Equals(Vector2.down))
-            return GetNodeType(index.x, index.y - 1) == NodeTypes.Ground;
-        
-        if (index.x < groundBounds.size.x && dir.Equals(Vector2.right))
-            return GetNodeType(index.x + 1, index.y) == NodeTypes.Ground;
-        
-        if (index.x > 0 && dir.Equals(Vector2.left))
-            return GetNodeType(index.x - 1, index.y) == NodeTypes.Ground;
 
-        return false;
+    public bool UpdateValidDirectionWhenGrabbing(Vector3 ownerPos, Vector3 objPos, Vector2 moveDir, Vector2 faceDir)
+    {
+        Node nodeForCheck;
+        NodeTypes nodeType;
+        Vector2Int objIndex = GetNodeGridIndex(objPos);
+        Vector2Int ownerIndex = GetNodeGridIndex(ownerPos);
+        bool isFacingEqualsToMoveDir;
+        
+        if (moveDir.Equals(Vector2.up) && objIndex.y < groundBounds.size.y)
+        {
+            isFacingEqualsToMoveDir = faceDir.Equals(moveDir);
+            nodeForCheck = isFacingEqualsToMoveDir
+                ? GetNode(objIndex.x, objIndex.y + 1)
+                : GetNode(ownerIndex.x, ownerIndex.y + 1);
+            if (!(nodeForCheck is null))
+            {
+                nodeType = nodeForCheck.nodeType;
+                if (nodeType.Equals(NodeTypes.None) || nodeType.Equals(NodeTypes.Obstacle)) return false;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else if (moveDir.Equals(Vector2.down) && objIndex.y > 0)
+        {
+            isFacingEqualsToMoveDir = faceDir.Equals(moveDir);
+            nodeForCheck = isFacingEqualsToMoveDir
+                ? GetNode(objIndex.x, objIndex.y - 1)
+                : GetNode(ownerIndex.x, ownerIndex.y - 1);
+            if (!(nodeForCheck is null))
+            {
+                nodeType = nodeForCheck.nodeType;
+                if (nodeType.Equals(NodeTypes.None) || nodeType.Equals(NodeTypes.Obstacle)) return false;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else if (moveDir.Equals(Vector2.right) && objIndex.x < groundBounds.size.x)
+        {
+            isFacingEqualsToMoveDir = faceDir.Equals(moveDir);
+            nodeForCheck = isFacingEqualsToMoveDir
+                ? GetNode(objIndex.x + 1, objIndex.y)
+                : GetNode(ownerIndex.x + 1, ownerIndex.y);
+            if (!(nodeForCheck is null))
+            {
+                nodeType = nodeForCheck.nodeType;
+                if (nodeType.Equals(NodeTypes.None) || nodeType.Equals(NodeTypes.Obstacle)) return false;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else if (moveDir.Equals(Vector2.left) && objIndex.x > 0)
+        {
+            isFacingEqualsToMoveDir = faceDir.Equals(moveDir);
+            nodeForCheck = isFacingEqualsToMoveDir
+                ? GetNode(objIndex.x - 1, objIndex.y)
+                : GetNode(ownerIndex.x - 1, ownerIndex.y);
+            if (!(nodeForCheck is null))
+            {
+                nodeType = nodeForCheck.nodeType;
+                if (nodeType.Equals(NodeTypes.None) || nodeType.Equals(NodeTypes.Obstacle)) return false;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
-    public Vector3 GetWorldPositionFromNodeGrid(int x, int y)
+    public Node GetNode(int x, int y)
     {
-        return ground.CellToWorld(new Vector3Int(x, y, 0));
+        if (x >= 0 && x < groundBounds.size.x && y >= 0 && y < groundBounds.size.y)
+            return NodeGrid[x, y];
+        return null;
+    }
+
+    public Node GetNode(Vector2Int index)
+    {
+        int x = index.x;
+        int y = index.y;
+        if (x >= 0 && x < groundBounds.size.x && y >= 0 && y < groundBounds.size.y)
+            return NodeGrid[x, y];
+        return null;
     }
 
     public NodeTypes GetNodeType(int x, int y)
@@ -139,4 +250,52 @@ public class GridManager : MonoBehaviour
         if (x < 0 || x >= groundBounds.size.x || y < 0 || y >= groundBounds.size.y) return NodeTypes.None;
         return NodeGrid[x, y].nodeType;
     }
+
+    // public void ProcessEntityInteraction()
+    // {
+    //     Vector3 playerWorldPos = Player.transform.position;
+    //     Vector2Int playerGridPos = GetNodeGridIndex(playerWorldPos);
+    //
+    //     foreach (var murderer in Murderers)
+    //     {
+    //         Vector3 murdererWorldPos = murderer.Value.transform.position;
+    //         Vector2Int murdererGridPos = GetNodeGridIndex(murdererWorldPos);
+    //         
+    //         if (playerGridPos.Equals(murdererGridPos))
+    //         {
+    //             PlayerMurdered.Raise();
+    //             Debug.Log("Player Died");
+    //             return;
+    //         }
+    //     }
+    //
+    //     Dictionary<int, List<int>> murdererLocations = new Dictionary<int, List<int>>();
+    //     foreach (var murderer in Murderers)
+    //     {
+    //         int id = murderer.Key;
+    //         Vector3 worldPos = murderer.Value.transform.position;
+    //         Vector2Int gridPos = GetNodeGridIndex(worldPos);
+    //         int key = gridPos.GetHashCode();
+    //
+    //         bool keyExist = murdererLocations.TryGetValue(key, out var list);
+    //         if(!keyExist) murdererLocations.Add(key, new List<int>(){id});
+    //         else murdererLocations[key].Add(id);
+    //     }
+    //
+    //     foreach (var location in murdererLocations)
+    //     {
+    //         List<int> murdererIds = location.Value;
+    //         if (murdererIds.Count > 1)
+    //         {
+    //             for (int i = 0; i < murdererIds.Count; i++)
+    //             {
+    //                 int id = murdererIds[i];
+    //                 GameObject obj = Murderers[id];
+    //                 obj.SetActive(false);
+    //
+    //                 Murderers.Remove(id);
+    //             }
+    //         }
+    //     }
+    // }
 }

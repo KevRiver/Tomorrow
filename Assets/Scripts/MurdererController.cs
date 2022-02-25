@@ -12,9 +12,11 @@ public class MurdererController : MonoBehaviour
     [Header("Grid Info")] 
     public GridManager Grid;
 
+    [Header("Move Info")] public bool IsMovedThisTurn;
+
     [Header("Model Controller")] public Transform Model;
     public ModelController modelcontroller;
-    
+
     [Header("Target")] public Transform Target;
     private Astar _pathFinder;
     
@@ -23,12 +25,9 @@ public class MurdererController : MonoBehaviour
     private Vector2Int _nextStep;
     private Vector3 _nextPosition;
 
-    private Animator _animController;
-
     private void Start()
     {
         transform.parent = null;
-        _animController = modelcontroller.AnimController;
     }
 
     public void Move()
@@ -40,7 +39,7 @@ public class MurdererController : MonoBehaviour
 
         List<Node> path = _pathFinder.CreatePath(Grid.NodeGrid, _start, _end, 1);
 
-        if (path == null) return;
+        if (path is null) return;
 
         _nextStep = new Vector2Int(path[0].X, path[0].Y);
         int dx = (int)_nextStep.x - _start.x;
@@ -53,7 +52,7 @@ public class MurdererController : MonoBehaviour
         if (dy < 0) modelcontroller.FaceDown();
         if (dy > 0) modelcontroller.FaceUp();
         
-        StartCoroutine(IMove());
+        StartCoroutine(MoveAndNotifyMovement());
     }
 
     private void SetStart()
@@ -69,7 +68,12 @@ public class MurdererController : MonoBehaviour
         Vector3Int pos = new Vector3Int((int) raw.x, (int) raw.y, (int) raw.z);
         _end = Grid.GetNodeGridIndex(pos);
     }
-
+    
+    private IEnumerator MoveAndNotifyMovement()
+    {
+        yield return StartCoroutine(IMove());
+        Grid.MurderersFinishedMove += 1;
+    }
     private IEnumerator IMove()
     {
         float timeElapsed = 0;
@@ -88,4 +92,6 @@ public class MurdererController : MonoBehaviour
             yield return null;
         }
     }
+
+    
 }

@@ -107,7 +107,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 3
+  m_SortingOrder: 4
   m_Sprite: {fileID: 6983202077367773121, guid: b00ed833f739dd143866727bbb514a55, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -305,9 +305,10 @@ GameObject:
   m_Component:
   - component: {fileID: 8049362635294008334}
   - component: {fileID: 8049362635294008335}
+  - component: {fileID: 1602674292585609824}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -341,6 +342,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MoveSpeed: 5
+  PlayerFaceDirection: {x: 0, y: -1}
   movePoint: {fileID: 8049362633836749996}
   item: {fileID: 0}
   LeftItem: {fileID: 0}
@@ -352,9 +354,38 @@ MonoBehaviour:
   CanMoveRight: 0
   CanMoveUp: 0
   CanMoveDown: 0
+  IsGrabbing: 0
   FaceLeft: {fileID: 11400000, guid: 19c55fb772be6c345af395bedd7993ee, type: 2}
   FaceRight: {fileID: 11400000, guid: 9aa9dc7abe1938341bb560f215424334, type: 2}
   FaceUp: {fileID: 11400000, guid: 6f8dc74aaba5d514389dfb578b63c9a4, type: 2}
   FaceDown: {fileID: 11400000, guid: 0f561b29dfb86de409a528cb5516cd72, type: 2}
-  Move: {fileID: 11400000, guid: c95ff78f6f3cf184cb8fe8a011744ff6, type: 2}
-  Drag: {fileID: 11400000, guid: 7b69a5caed659ff44b78532f4fabf2c3, type: 2}
+  PlayerMove: {fileID: 11400000, guid: c95ff78f6f3cf184cb8fe8a011744ff6, type: 2}
+  StoredInGridManger: 0
+--- !u!114 &1602674292585609824
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8049362635294008369}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d84c8c46f24bc44689ed5fe91d7423b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Event: {fileID: 11400000, guid: 2f6aaee55466e294d99f74a59004a3c4, type: 2}
+  Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 8049362635294008369}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2

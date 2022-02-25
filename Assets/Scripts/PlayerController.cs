@@ -1,13 +1,10 @@
 #define DEBUG
 
 using System;
-using System.Collections.Generic;
 using UnityEngine;
-using System.Collections.Generic;
 
 public class PlayerController : MonoBehaviour
 {
-
     const float MOVE_THRESHOLD = 0.0001f;
     public float MoveSpeed = 5f;
     public Vector2 PlayerFaceDirection = Vector2.down;
@@ -30,123 +27,70 @@ public class PlayerController : MonoBehaviour
     public GameEvent FaceRight;
     public GameEvent FaceUp;
     public GameEvent FaceDown;
-    public GameEvent Move;
-    public GameEvent Drag;
-    
-    
-    #region Movable object
+    public GameEvent PlayerMove;
     
     float _grabRadius = 0.5f;
     Movable _grabbedMovableObj;
 
-    #endregion
+    private bool _horizontalInputLock;
+    private bool _verticalInputLock;
 
-    void Start()
+    private float _horizontalInput;
+    private float _verticalInput;
+
+    [HideInInspector] public bool StoredInGridManger = false;
+
+    private void Start()
     {
         transform.parent = null;
         movePoint.parent = null;
     }
-    void Update()
+
+    private void Update()
     {
+        // Move
         transform.position = Vector3.MoveTowards(transform.position, movePoint.position, MoveSpeed * Time.deltaTime);
 
         if (Vector3.Distance(transform.position, movePoint.position) > MOVE_THRESHOLD) return;
         
         UpdateValidDirection();
-
-        bool horizontalInputLock = IsGrabbing &&
-                                   (PlayerFaceDirection.Equals(Vector2.up) || PlayerFaceDirection.Equals(Vector2.down));
-        bool verticalInputLock = IsGrabbing &&
-                                   (PlayerFaceDirection.Equals(Vector2.left) || PlayerFaceDirection.Equals(Vector2.right));
-
-        float horizontalInput = !horizontalInputLock ? Input.GetAxisRaw("Horizontal") : 0f;
-        float verticalInput = !verticalInputLock ? Input.GetAxisRaw("Vertical") : 0f;
         
-        if (Mathf.Abs(horizontalInput) >= 1f)
-        {
-            float dir = Mathf.Sign(horizontalInput);
-            
-            if (!IsGrabbing)
-            {
-                PlayerFaceDirection = new Vector2(dir, 0);
-                if (dir < 0) FaceLeft.Raise();
-                else FaceRight.Raise();
-            }
-            else
-            {
-                if(dir < 0 && CanMoveLeft) {
-                    CanMoveLeft = Grid.CheckMovementValid(_grabbedMovableObj.transform.position, Vector2.left);
-                }
-                else if(dir > 0 && CanMoveRight)
-                {
-                    CanMoveRight = Grid.CheckMovementValid(_grabbedMovableObj.transform.position, Vector2.right);
-                }
-            }
+        HandleGrabInput();
 
-            if (dir < 0 && !CanMoveLeft) return;
-            if (dir > 0 && !CanMoveRight) return;
-
-            Move.Raise();
-
-            movePoint.position += new Vector3(dir, 0f, 0f);
-            
-            // item.GetComponent<SpriteRenderer>().flipX = (horizontalInput >= 1f);
-            //
-            // item.transform.position = (horizontalInput >= 1)? RightItem.transform.position : LeftItem.transform.position;
-            //
-            // item.GetComponent<SpriteRenderer>().sortingOrder = 1;
-
-            if (_grabbedMovableObj != null) _grabbedMovableObj.MoveObject(new Vector2(Input.GetAxisRaw("Horizontal"), 0f));
-
-
-
-        }
-        else if (Math.Abs(Input.GetAxisRaw("Vertical")) >= 1f)
-        {
-            float dir = Mathf.Sign(verticalInput);
-
-            if (!IsGrabbing)
-            {
-                PlayerFaceDirection = new Vector2(0, dir);
-
-                if (dir > 0) FaceUp.Raise();
-                else FaceDown.Raise();
-            }
-            else
-            {
-                if(dir < 0 && CanMoveDown) {
-                    CanMoveDown = Grid.CheckMovementValid(_grabbedMovableObj.transform.position, Vector2.down);
-                }
-                else if(dir > 0 && CanMoveUp)
-                {
-                    CanMoveUp = Grid.CheckMovementValid(_grabbedMovableObj.transform.position, Vector2.up);
-                }
-            }
-
-            if (dir < 0 && !CanMoveDown) return;
-            if (dir > 0 && !CanMoveUp) return;
-            
-            Move.Raise();
-
-            movePoint.position += new Vector3(0f, dir, 0f);
-            
-            // vertical input�̸� �������� order layer�� 0����, �ƴϸ� 1�� ����
-            bool isVerticalInput = (verticalInput >= 1f);
-
-            // item.GetComponent<SpriteRenderer>().flipX = isVerticalInput;
-            //
-            // item.transform.position = (verticalInput >= 1) ? RightItem.transform.position : LeftItem.transform.position;
-            //
-            // item.GetComponent<SpriteRenderer>().sortingOrder = Convert.ToInt32(!isVerticalInput);
-
-            if (_grabbedMovableObj != null) _grabbedMovableObj.MoveObject(new Vector2(0f, Input.GetAxisRaw("Vertical")));
-
-        }
+        //CheckPreventedInputAxis();
         
-        InteractionUpdate();
+        HandleInput();
     }
 
-    void InteractionUpdate()
+    private void UpdateValidDirection()
+    {
+        Vector3 raw = transform.position;
+        Vector3Int pos = new Vector3Int((int) raw.x, (int) raw.y, (int) raw.z);
+        Vector2Int index = Grid.GetNodeGridIndex(pos);
+
+        if (IsGrabbing)
+        {
+            if (PlayerFaceDirection.Equals(Vector2.left) || PlayerFaceDirection.Equals(Vector2.right))
+            {
+                CanMoveLeft = Grid.GetNodeType(index.x - 1, index.y) == NodeTypes.Ground;
+                CanMoveRight = Grid.GetNodeType(index.x + 1, index.y) == NodeTypes.Ground;
+            }
+            else
+            {
+                CanMoveUp = Grid.GetNodeType(index.x, index.y + 1) == NodeTypes.Ground;
+                CanMoveDown = Grid.GetNodeType(index.x, index.y - 1) == NodeTypes.Ground;
+            }
+        }
+        else
+        {
+            CanMoveUp = Grid.GetNodeType(index.x, index.y + 1) == NodeTypes.Ground;
+            CanMoveDown = Grid.GetNodeType(index.x, index.y - 1) == NodeTypes.Ground;
+            CanMoveLeft = Grid.GetNodeType(index.x - 1, index.y) == NodeTypes.Ground;
+            CanMoveRight = Grid.GetNodeType(index.x + 1, index.y) == NodeTypes.Ground;
+        }
+    }
+    
+    void HandleGrabInput()
     {
         if (Input.GetButtonDown("Fire1"))
         {
@@ -162,7 +106,7 @@ public class PlayerController : MonoBehaviour
             _grabbedMovableObj = null;
         }
 
-        if (_grabbedMovableObj != null)
+        if (!(_grabbedMovableObj is null))
         {
             IsGrabbing = true;
             if (PlayerFaceDirection.Equals(Vector2.left) || PlayerFaceDirection.Equals(Vector2.right))
@@ -180,15 +124,117 @@ public class PlayerController : MonoBehaviour
         {
             IsGrabbing = false;
         }
+        
+        _horizontalInputLock = IsGrabbing &&
+                               (PlayerFaceDirection.Equals(Vector2.up) || PlayerFaceDirection.Equals(Vector2.down));
+        _verticalInputLock = IsGrabbing &&
+                             (PlayerFaceDirection.Equals(Vector2.left) || PlayerFaceDirection.Equals(Vector2.right));
+
+        _horizontalInput = !_horizontalInputLock ? Input.GetAxisRaw("Horizontal") : 0f;
+        _verticalInput = !_verticalInputLock ? Input.GetAxisRaw("Vertical") : 0f;
     }
+
+    // private void CheckPreventedInputAxis()
+    // {
+    //     _horizontalInputLock = IsGrabbing &&
+    //                            (PlayerFaceDirection.Equals(Vector2.up) || PlayerFaceDirection.Equals(Vector2.down));
+    //     _verticalInputLock = IsGrabbing &&
+    //                          (PlayerFaceDirection.Equals(Vector2.left) || PlayerFaceDirection.Equals(Vector2.right));
+    //
+    //     _horizontalInput = !_horizontalInputLock ? Input.GetAxisRaw("Horizontal") : 0f;
+    //     _verticalInput = !_verticalInputLock ? Input.GetAxisRaw("Vertical") : 0f;
+    // }
+
+    private void HandleInput()
+    {
+        float dir = 0;
+        if (Mathf.Abs(_horizontalInput) >= 1f)
+        {
+            dir = Mathf.Sign(_horizontalInput);
+            
+            if (!IsGrabbing)
+            {
+                PlayerFaceDirection = new Vector2(dir, 0);
+                if (dir < 0) FaceLeft.Raise();
+                else FaceRight.Raise();
+            }
+            else
+            {
+                if(dir < 0) {
+                    CanMoveLeft = Grid.UpdateValidDirectionWhenGrabbing(transform.position, _grabbedMovableObj.transform.position, Vector2.left, PlayerFaceDirection);
+                }
+                else if(dir > 0)
+                {
+                    CanMoveRight = Grid.UpdateValidDirectionWhenGrabbing(transform.position, _grabbedMovableObj.transform.position, Vector2.right, PlayerFaceDirection);
+                }
+            }
+
+            if (dir < 0 && !CanMoveLeft) return;
+            if (dir > 0 && !CanMoveRight) return;
+            
+            movePoint.position += new Vector3(dir, 0f, 0f);
+            
+            if (!(_grabbedMovableObj is null)) _grabbedMovableObj.MoveObject(new Vector2(dir, 0f));
+            
+            PlayerMove.Raise();
+            
+            // item.GetComponent<SpriteRenderer>().flipX = (horizontalInput >= 1f);
+            //
+            // item.transform.position = (horizontalInput >= 1)? RightItem.transform.position : LeftItem.transform.position;
+            //
+            // item.GetComponent<SpriteRenderer>().sortingOrder = 1;
+            
+        }
+        else if (Math.Abs(Input.GetAxisRaw("Vertical")) >= 1f)
+        {
+            dir = Mathf.Sign(_verticalInput);
+
+            if (!IsGrabbing)
+            {
+                PlayerFaceDirection = new Vector2(0, dir);
+
+                if (dir > 0) FaceUp.Raise();
+                else FaceDown.Raise();
+            }
+            else
+            {
+                if(dir < 0)
+                {
+                    CanMoveDown = Grid.UpdateValidDirectionWhenGrabbing(transform.position,
+                        _grabbedMovableObj.transform.position, Vector2.down, PlayerFaceDirection);
+                }
+                else if(dir > 0)
+                {
+                    CanMoveUp = Grid.UpdateValidDirectionWhenGrabbing(transform.position,
+                        _grabbedMovableObj.transform.position, Vector2.up, PlayerFaceDirection);
+                }
+            }
+
+            if (dir < 0 && !CanMoveDown) return;
+            if (dir > 0 && !CanMoveUp) return;
+            
+            movePoint.position += new Vector3(0f, dir, 0f);
+            
+            if (!(_grabbedMovableObj is null)) _grabbedMovableObj.MoveObject(new Vector2(0f, dir));
+            
+            PlayerMove.Raise();
+
+            // item.GetComponent<SpriteRenderer>().flipX = isVerticalInput;
+            //
+            // item.transform.position = (verticalInput >= 1) ? RightItem.transform.position : LeftItem.transform.position;
+            //
+            // item.GetComponent<SpriteRenderer>().sortingOrder = Convert.ToInt32(!isVerticalInput);
+        }
+    }
+
+    
 
     Movable GetMovableObj()
     {
         Collider2D obj = Physics2D.OverlapCircle((Vector2)transform.position + PlayerFaceDirection, _grabRadius);
-        if (obj != null && obj.CompareTag("Movable"))
-            return obj.GetComponent<Movable>();
-        
-        return null;
+        Movable m = null;
+        if (!(obj is null)) m = obj.CompareTag("Movable") ? obj.GetComponent<Movable>() : null;
+        return m;
     }
     
     
@@ -263,33 +309,7 @@ public class PlayerController : MonoBehaviour
         LockTheDoor(collision);
     }
 
-    void UpdateValidDirection()
-    {
-        Vector3 raw = transform.position;
-        Vector3Int pos = new Vector3Int((int) raw.x, (int) raw.y, (int) raw.z);
-        Vector2Int index = Grid.GetNodeGridIndex(pos);
-
-        if (IsGrabbing)
-        {
-            if (PlayerFaceDirection.Equals(Vector2.left) || PlayerFaceDirection.Equals(Vector2.right))
-            {
-                CanMoveLeft = Grid.GetNodeType(index.x - 1, index.y) == NodeTypes.Ground;
-                CanMoveRight = Grid.GetNodeType(index.x + 1, index.y) == NodeTypes.Ground;
-            }
-            else
-            {
-                CanMoveUp = Grid.GetNodeType(index.x, index.y + 1) == NodeTypes.Ground;
-                CanMoveDown = Grid.GetNodeType(index.x, index.y - 1) == NodeTypes.Ground;
-            }
-        }
-        else
-        {
-            CanMoveUp = Grid.GetNodeType(index.x, index.y + 1) == NodeTypes.Ground;
-            CanMoveDown = Grid.GetNodeType(index.x, index.y - 1) == NodeTypes.Ground;
-            CanMoveLeft = Grid.GetNodeType(index.x - 1, index.y) == NodeTypes.Ground;
-            CanMoveRight = Grid.GetNodeType(index.x + 1, index.y) == NodeTypes.Ground;
-        }
-    }
+    
 
     private void OnDrawGizmos()
     {
