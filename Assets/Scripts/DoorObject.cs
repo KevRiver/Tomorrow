@@ -7,12 +7,16 @@ public class DoorObject : MonoBehaviour
     public bool IsOpened;
     public GameObject OpenedDoor, ClosedDoor;
     public GameEvent OpenDialog;
+
+    AudioSource audioSource;
     
     void Start()
     {
         IsOpened = true;
         OpenedDoor.SetActive(true);
         ClosedDoor.SetActive(false);
+
+        audioSource = this.gameObject.GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -34,6 +38,9 @@ public class DoorObject : MonoBehaviour
         {
             OpenedDoor.SetActive(false);
             ClosedDoor.SetActive(true);
+            
+            audioSource.Play();
+
             IsOpened = false;
             player.item.GetComponent<SpriteRenderer>().sprite = null;
 

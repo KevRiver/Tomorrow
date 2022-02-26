@@ -12,7 +12,14 @@ public class Movable : MonoBehaviour
 
     bool moveTrigger = false;
     Vector2 targetPos;
-    
+
+    AudioSource audioSource;
+
+    void Start()
+    {
+        audioSource = this.gameObject.GetComponent<AudioSource>();
+    }
+
     void Update()
     {
         if (moveTrigger)
@@ -35,6 +42,8 @@ public class Movable : MonoBehaviour
 
         Grid.NodeGrid[curGridIndex.x, curGridIndex.y].nodeType = NodeTypes.Ground;
         Grid.NodeGrid[targetGridIndex.x, targetGridIndex.y].nodeType = NodeTypes.Movable;
+
+        audioSource.Play();
     }
 
 }
