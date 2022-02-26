@@ -8,6 +8,5 @@ public class CutSceeneChanger : MonoBehaviour
     public void sceneChange()
     {
         SceneManager.LoadScene(sceneNameToChange);
-
     }
 }

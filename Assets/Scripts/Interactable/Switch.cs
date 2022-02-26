@@ -15,11 +15,11 @@ public class Switch : Interactable
         {
             remoteLight.toggleLight();
             used = true;
-            DeFocous();
+            DeFocus();
         }
     }
 
-    public override void Focous()
+    public override void Focus()
     {
         if (!used)
         {

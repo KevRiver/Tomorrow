@@ -374,6 +374,7 @@ GameObject:
   - component: {fileID: 146804776}
   - component: {fileID: 146804775}
   - component: {fileID: 146804774}
+  - component: {fileID: 146804777}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -446,6 +447,39 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &146804777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 146804773}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_Version: 2
 --- !u!1001 &163057512
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -676,7 +710,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &255981491
 Transform:
   m_ObjectHideFlags: 0
@@ -765,7 +799,7 @@ GameObject:
   - component: {fileID: 355795311}
   - component: {fileID: 355795312}
   m_Layer: 0
-  m_Name: items_0
+  m_Name: Knife
   m_TagString: knife
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -830,7 +864,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 355795308}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.51, y: 4.48, z: 0}
+  m_LocalPosition: {x: 7.5, y: 2.5, z: 0}
   m_LocalScale: {x: 0.5185, y: 0.5185, z: 0.5185}
   m_Children: []
   m_Father: {fileID: 0}
@@ -942,6 +976,78 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fcb3244ade1ee9d42be5cccd45a94cf3, type: 3}
+--- !u!1 &408090881
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 408090884}
+  - component: {fileID: 408090883}
+  - component: {fileID: 408090882}
+  m_Layer: 0
+  m_Name: SceneManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &408090882
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 408090881}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d84c8c46f24bc44689ed5fe91d7423b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Event: {fileID: 11400000, guid: 2f6aaee55466e294d99f74a59004a3c4, type: 2}
+  Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 408090883}
+        m_TargetAssemblyTypeName: ChangeScene, Assembly-CSharp
+        m_MethodName: LoadKillingScene
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &408090883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 408090881}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0d5fe852383111439d0c82c87492c54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &408090884
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 408090881}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 7.5, y: 1.75, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 15
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &426447840
 GameObject:
   m_ObjectHideFlags: 0
@@ -2222,7 +2328,7 @@ GameObject:
   - component: {fileID: 905094330}
   - component: {fileID: 905094331}
   m_Layer: 0
-  m_Name: items_1
+  m_Name: Lock
   m_TagString: lock
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2489,18 +2595,6 @@ PrefabInstance:
       propertyPath: Grid
       value: 
       objectReference: {fileID: 1811886312}
-    - target: {fileID: 8049362635294008335, guid: 4a63ff87106f8e5459718774668f56fb, type: 3}
-      propertyPath: item
-      value: 
-      objectReference: {fileID: 426447840}
-    - target: {fileID: 8049362635294008335, guid: 4a63ff87106f8e5459718774668f56fb, type: 3}
-      propertyPath: LeftItem
-      value: 
-      objectReference: {fileID: 1015812833}
-    - target: {fileID: 8049362635294008335, guid: 4a63ff87106f8e5459718774668f56fb, type: 3}
-      propertyPath: RightItem
-      value: 
-      objectReference: {fileID: 188234559}
     - target: {fileID: 8049362635294008369, guid: 4a63ff87106f8e5459718774668f56fb, type: 3}
       propertyPath: m_Name
       value: Player
@@ -3623,7 +3717,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd84e20ba35db144bab1512a17fad9ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayerMurdered: {fileID: 11400000, guid: 2f6aaee55466e294d99f74a59004a3c4, type: 2}
   GroundTilemap: {fileID: 672547659}
   ObstacleTilemap: {fileID: 1771922480}
   EntityTilemap: {fileID: 534174831}
@@ -3651,7 +3744,6 @@ MonoBehaviour:
   _movable:
   - {fileID: 183551315}
   Player: {fileID: 133444557}
-  MurderersMoveCount: 0
   curGridPos: {x: 0, y: 0, z: 0}
   curTileType: 
   groundBounds:
@@ -4288,11 +4380,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3914348450132361700, guid: 13ffb11161a539142a7bec6abd7e1c20, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 10.821
+      value: 10.77
       objectReference: {fileID: 0}
     - target: {fileID: 3914348450132361700, guid: 13ffb11161a539142a7bec6abd7e1c20, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.576
+      value: 2.61
       objectReference: {fileID: 0}
     - target: {fileID: 3914348450132361700, guid: 13ffb11161a539142a7bec6abd7e1c20, type: 3}
       propertyPath: m_LocalPosition.z

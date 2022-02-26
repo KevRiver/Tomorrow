@@ -19,12 +19,12 @@ public abstract class Interactable : MonoBehaviour
     }
 
     public abstract void Interact();
-    public virtual void Focous()
+    public virtual void Focus()
     {
         highlight.intensity = highlightIntensity;
     }
 
-    public virtual void DeFocous()
+    public virtual void DeFocus()
     {
         highlight.intensity = 0;
     }

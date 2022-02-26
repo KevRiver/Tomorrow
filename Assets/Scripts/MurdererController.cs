@@ -12,7 +12,7 @@ public class MurdererController : MonoBehaviour
     [Header("Grid Info")] 
     public GridManager Grid;
 
-    [Header("Move Info")] public bool IsMovedThisTurn;
+    [Header("Move Info")] public bool IsMoving;
 
     [Header("Model Controller")] public Transform Model;
     public ModelController modelcontroller;
@@ -42,13 +42,9 @@ public class MurdererController : MonoBehaviour
 
         List<Node> path = _pathFinder.CreatePath(Grid.NodeGrid, _start, _end, 1);
 
-        if (path is null)
-        {
-            Grid.MurderersMoveCount += 1;
-            return;
-        }
+        if (path is null) return;
 
-        _nextStep = new Vector2Int(path[0].X, path[0].Y);
+            _nextStep = new Vector2Int(path[0].X, path[0].Y);
         int dx = (int)_nextStep.x - _start.x;
         int dy = (int)_nextStep.y - _start.y;
 
@@ -76,8 +72,9 @@ public class MurdererController : MonoBehaviour
         _end = Grid.GetNodeGridIndex(pos);
     }
     
-    private IEnumerator IMove()
+    public IEnumerator IMove()
     {
+        IsMoving = true;
         float timeElapsed = 0;
         float timeLimit = 0.2f;
         
@@ -93,7 +90,18 @@ public class MurdererController : MonoBehaviour
             
             yield return null;
         }
+
+        IsMoving = false;
     }
 
-    
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        GameObject collideWith = other.gameObject;
+        bool collideWithMurderer = collideWith.tag.Equals("Murderer");
+        if (collideWithMurderer)
+        {
+            gameObject.SetActive(false);
+            collideWith.SetActive(false);
+        }
+    }
 }

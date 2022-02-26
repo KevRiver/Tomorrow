@@ -10,8 +10,6 @@ using UnityEngine.Tilemaps;
 [ExecuteInEditMode]
 public class GridManager : MonoBehaviour
 {
-    public GameEvent PlayerMurdered;
-    
     public Tilemap GroundTilemap;
     public Tilemap ObstacleTilemap;
     public Transform EntityTilemap;
@@ -25,9 +23,8 @@ public class GridManager : MonoBehaviour
     public Node[,] NodeGrid;
 
     public GameObject Player;
-    private PlayerController _playerController;
     public Dictionary<int, GameObject> Murderers = new Dictionary<int, GameObject>();
-    public int MurderersMoveCount = 0;
+    public List<Switch> Switches = new List<Switch>();
 
     public Astar PathFinder;
     new Camera camera;
@@ -109,7 +106,9 @@ public class GridManager : MonoBehaviour
 
         for (int i = 0; i < _interactables.Count; i++)
         {
-            Vector2Int index = GetNodeGridIndex(_movable[i].position);
+            Switches.Add(_interactables[i].GetComponent<Switch>());
+            
+            Vector2Int index = GetNodeGridIndex(_interactables[i].position);
             NodeGrid[index.x, index.y].nodeType = NodeTypes.Interactable;
         }
 
@@ -249,5 +248,18 @@ public class GridManager : MonoBehaviour
     {
         if (x < 0 || x >= groundBounds.size.x || y < 0 || y >= groundBounds.size.y) return NodeTypes.None;
         return NodeGrid[x, y].nodeType;
+    }
+
+    public void GlowInteractables()
+    {
+        foreach (var item in Switches)
+        {
+            Vector2Int switchIndex = GetNodeGridIndex(item.transform.position);
+            Vector2Int playerIndex = GetNodeGridIndex(Player.transform.position);
+            float distance = Vector2Int.Distance(switchIndex, playerIndex);
+            
+            if(distance < 3) item.Focus();
+            else item.DeFocus();
+        }
     }
 }

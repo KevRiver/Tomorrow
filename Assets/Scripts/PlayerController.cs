@@ -31,9 +31,11 @@ public class PlayerController : MonoBehaviour
     public GameEvent FaceUp;
     public GameEvent FaceDown;
     public GameEvent PlayerMove;
+    public GameEvent PlayerMurdered;
     
     float _grabRadius = 0.5f;
     Movable _grabbedMovableObj;
+    private Switch _switch;
 
     private bool _horizontalInputLock;
     private bool _verticalInputLock;
@@ -106,6 +108,12 @@ public class PlayerController : MonoBehaviour
         if (Input.GetButtonDown("Fire1"))
         {
             _grabbedMovableObj = GetMovableObj();
+            _switch = GetInteractableObj();
+            if (!(_switch is null))
+            {
+                _switch.Interact();
+                _switch = null;
+            }
         }
         else if (Input.GetButtonUp("Fire1"))
         {
@@ -143,6 +151,14 @@ public class PlayerController : MonoBehaviour
 
         _horizontalInput = !_horizontalInputLock ? Input.GetAxisRaw("Horizontal") : 0f;
         _verticalInput = !_verticalInputLock ? Input.GetAxisRaw("Vertical") : 0f;
+    }
+
+    private Switch GetInteractableObj()
+    {
+        Collider2D obj = Physics2D.OverlapCircle((Vector2)transform.position + PlayerFaceDirection, _grabRadius);
+        Switch s = null;
+        if (!(obj is null)) s = obj.CompareTag("Interactable") ? obj.GetComponent<Switch>() : null;
+        return s;
     }
 
     private void HandleInput()
@@ -278,7 +294,7 @@ public class PlayerController : MonoBehaviour
 
     void AttackToEnemy(Collider2D collision)
     {
-        if (item.activeSelf && collision.tag == "enemy")
+        if (item.activeSelf && collision.tag == "Murderer")
         {
             Destroy(collision.gameObject);
             item.tag = "free_hand";
@@ -298,12 +314,25 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        GameObject collideWith = collision.gameObject;
+        bool collideWithMurderer = collideWith.tag.Equals("Murderer");
+        if (collideWithMurderer)
+        {
+            bool playerHasKnife = item.activeInHierarchy && item.tag.Equals("knife");
+            if (!playerHasKnife)
+            {
+                PlayerMurdered.Raise();
+                return;
+            }
+
+            Destroy(collideWith);
+            item.tag = "free_hand";
+            item.SetActive(false);
+        }
+
         GetItem(collision);
-        AttackToEnemy(collision);
         LockTheDoor(collision);
     }
-
-    
 
     private void OnDrawGizmos()
     {
