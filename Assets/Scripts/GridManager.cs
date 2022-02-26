@@ -13,18 +13,21 @@ public class GridManager : MonoBehaviour
     public Tilemap GroundTilemap;
     public Tilemap ObstacleTilemap;
     public Transform EntityTilemap;
-    public Transform InteractableTilemap;
+    public Transform SwitchTilemap;
+    public Transform GlassWallTilemap;
     public Transform MovableTilemap;
     
     [SerializeField] private List<Transform> _entities;
-    [SerializeField] private List<Transform> _interactables;
+    [SerializeField] private List<Transform> _switches;
+    [SerializeField] private List<Transform> _glassWalls;
     [SerializeField] private List<Transform> _movable;
     
     public Node[,] NodeGrid;
 
     public GameObject Player;
     public Dictionary<int, GameObject> Murderers = new Dictionary<int, GameObject>();
-    public List<Switch> Switches = new List<Switch>();
+    private List<Switch> Switches = new List<Switch>();
+    private List<GlassWall> GlassWalls = new List<GlassWall>();
 
     public Astar PathFinder;
     new Camera camera;
@@ -48,8 +51,11 @@ public class GridManager : MonoBehaviour
         _entities = EntityTilemap.GetComponentsInChildren<Transform>().ToList();
         _entities.RemoveAt(0);
         
-        _interactables = InteractableTilemap.GetComponentsInChildren<Transform>().ToList();
-        _interactables.RemoveAt(0);
+        _switches = SwitchTilemap.GetComponentsInChildren<Transform>().ToList();
+        _switches.RemoveAt(0);
+
+        _glassWalls = GlassWallTilemap.GetComponentsInChildren<Transform>().ToList();
+        _glassWalls.RemoveAt(0);
         
         _movable = MovableTilemap.GetComponentsInChildren<Transform>().ToList();
         _movable.RemoveAt(0);
@@ -58,6 +64,12 @@ public class GridManager : MonoBehaviour
         
         CreateNodeGrid();
         PathFinder = new Astar(groundBounds.size.x, groundBounds.size.y);
+    }
+
+    private void OnDisable()
+    {
+        Switches.Clear();
+        GlassWalls.Clear();
     }
 
     /// <summary>
@@ -104,11 +116,19 @@ public class GridManager : MonoBehaviour
         
         #region Interactable Objects
 
-        for (int i = 0; i < _interactables.Count; i++)
+        for (int i = 0; i < _switches.Count; i++)
         {
-            Switches.Add(_interactables[i].GetComponent<Switch>());
+            Switches.Add(_switches[i].GetComponent<Switch>());
             
-            Vector2Int index = GetNodeGridIndex(_interactables[i].position);
+            Vector2Int index = GetNodeGridIndex(_switches[i].position);
+            NodeGrid[index.x, index.y].nodeType = NodeTypes.Interactable;
+        }
+
+        for (int i = 0; i < _glassWalls.Count; i++)
+        {
+            GlassWalls.Add(_glassWalls[i].GetComponent<GlassWall>());
+            
+            Vector2Int index = GetNodeGridIndex(_glassWalls[i].position);
             NodeGrid[index.x, index.y].nodeType = NodeTypes.Interactable;
         }
 
@@ -250,16 +270,37 @@ public class GridManager : MonoBehaviour
         return NodeGrid[x, y].nodeType;
     }
 
-    public void GlowInteractables()
+    public void UpdateInteractables()
     {
+        Debug.Log("Player Moved, Update Interactables");
+        Vector2Int playerIndex = GetNodeGridIndex(Player.transform.position);
+        float distance;
         foreach (var item in Switches)
         {
             Vector2Int switchIndex = GetNodeGridIndex(item.transform.position);
-            Vector2Int playerIndex = GetNodeGridIndex(Player.transform.position);
-            float distance = Vector2Int.Distance(switchIndex, playerIndex);
+            
+            distance = Vector2Int.Distance(switchIndex, playerIndex);
             
             if(distance < 3) item.Focus();
             else item.DeFocus();
+        }
+
+        foreach (var item in GlassWalls)
+        {
+            Vector2Int glassWallIndex = GetNodeGridIndex(item.transform.position);
+            
+            distance = Vector2Int.Distance(glassWallIndex, playerIndex);
+            Debug.LogFormat("Glasswall, Player distance : {0}", distance);
+            if (distance < 1.42f)
+            {
+                item.Appear();
+                item.Focus();
+            }
+            else
+            {
+                item.Disappear();
+                item.DeFocus();
+            }
         }
     }
 }

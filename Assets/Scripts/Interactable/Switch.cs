@@ -26,6 +26,5 @@ public class Switch : Interactable
             highlight.intensity = highlightIntensity;
         }
     }
-
-
+    
 }

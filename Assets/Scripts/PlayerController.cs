@@ -297,18 +297,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void AttackToEnemy(Collider2D collision)
-    {
-        if (item.activeSelf && collision.tag == "Murderer")
-        {
-            Debug.Log("TESTtest");
-            Destroy(collision.gameObject);
-            item.tag = "free_hand";
-            item.SetActive(false);
-            audioSource.Play();
-        }
-    }
-
     void LockTheDoor(Collider2D collision)
     {
         if (item.activeSelf && collision.tag == "door")
@@ -377,7 +365,6 @@ public class PlayerController : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-
         
         Gizmos.DrawWireSphere(transform.position + (Vector3)PlayerFaceDirection, _grabRadius);
 
