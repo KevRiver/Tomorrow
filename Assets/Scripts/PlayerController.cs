@@ -47,10 +47,14 @@ public class PlayerController : MonoBehaviour
 
     [HideInInspector] public bool StoredInGridManger = false;
 
+    AudioSource audioSource;
+
     private void Start()
     {
         transform.parent = null;
         movePoint.parent = null;
+
+        audioSource = this.gameObject.GetComponent<AudioSource>();
     }
 
     private void Update()
@@ -296,9 +300,11 @@ public class PlayerController : MonoBehaviour
     {
         if (item.activeSelf && collision.tag == "Murderer")
         {
+            Debug.Log("TESTtest");
             Destroy(collision.gameObject);
             item.tag = "free_hand";
             item.SetActive(false);
+            audioSource.Play();
         }
     }
 

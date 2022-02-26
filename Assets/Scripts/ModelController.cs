@@ -7,7 +7,9 @@ public class ModelController : MonoBehaviour
     private SpriteRenderer _renderer;
     public Animator AnimController;
     public List<Sprite> Sprites;
-    
+
+    AudioSource audioSource;
+
     private const int DOWN = 0;
     private const int RIGHT = 1;
     private const int UP = 2;
@@ -16,6 +18,7 @@ public class ModelController : MonoBehaviour
         _renderer = GetComponent<SpriteRenderer>();
         AnimController = GetComponent<Animator>();
         _renderer.sprite = Sprites[DOWN];
+        audioSource = this.gameObject.GetComponent<AudioSource>();
     }
 
     public void FaceLeft()
@@ -47,5 +50,6 @@ public class ModelController : MonoBehaviour
         if (AnimController == null) return;
         int id = Animator.StringToHash("Hop");
         AnimController.SetTrigger(id);
+        audioSource.Play();
     }
 }
