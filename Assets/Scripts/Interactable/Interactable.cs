@@ -1,6 +1,7 @@
 using UnityEngine.Experimental.Rendering.Universal;
 using UnityEngine;
 
+[RequireComponent(typeof(Light2D))]
 public abstract class Interactable : MonoBehaviour
 {
     protected Light2D highlight;
