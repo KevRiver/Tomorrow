@@ -56,7 +56,7 @@ Transform:
   m_GameObject: {fileID: 4966411591069993577}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.231, y: -0.142, z: 0}
-  m_LocalScale: {x: 0.3116817, y: 0.2991086, z: 3.308723}
+  m_LocalScale: {x: 0.4, y: 0.39, z: 3.308723}
   m_Children: []
   m_Father: {fileID: 8049362634530446610}
   m_RootOrder: 2
@@ -564,7 +564,7 @@ MonoBehaviour:
   LeftItem: {fileID: 2596263702910809657}
   RightItem: {fileID: 7080604431523729795}
   itemKnife: {fileID: 6761164967045977113, guid: 9b928d884a6edcd40b62c1f1c904f19f, type: 3}
-  itemLock: {fileID: 5508725064705088119, guid: 9b928d884a6edcd40b62c1f1c904f19f, type: 3}
+  itemLock: {fileID: 21300000, guid: ba0f31ddecf125143a669255ebc0c791, type: 3}
   Grid: {fileID: 0}
   CanMoveLeft: 0
   CanMoveRight: 0

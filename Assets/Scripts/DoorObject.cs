@@ -13,8 +13,8 @@ public class DoorObject : MonoBehaviour
     void Start()
     {
         IsOpened = true;
-        OpenedDoor.SetActive(true);
-        ClosedDoor.SetActive(false);
+        OpenedDoor.SetActive(false);
+        ClosedDoor.SetActive(true);
 
         audioSource = this.gameObject.GetComponent<AudioSource>();
     }
@@ -28,12 +28,12 @@ public class DoorObject : MonoBehaviour
         
         if (IsOpened)
         {
-            OpenedDoor.SetActive(false);
-            ClosedDoor.SetActive(true);
+            OpenedDoor.SetActive(true);
+            ClosedDoor.SetActive(false);
             
             audioSource.Play();
 
-            IsOpened = false;
+            IsOpened = true;
             player.item.GetComponent<SpriteRenderer>().sprite = null;
 
             OpenDialog.Raise();

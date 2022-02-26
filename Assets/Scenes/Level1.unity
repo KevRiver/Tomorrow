@@ -237,7 +237,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 74bde6bae8442a147aa961608ac92469, type: 3}
+  m_audioClip: {fileID: 8300000, guid: a8f52b320c51ddc4f8f4f7c11dcc35d1, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -1004,7 +1004,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &255981491
 Transform:
   m_ObjectHideFlags: 0
@@ -2695,7 +2695,7 @@ GameObject:
   - component: {fileID: 905094330}
   - component: {fileID: 905094331}
   m_Layer: 0
-  m_Name: Lock
+  m_Name: Key
   m_TagString: lock
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2741,7 +2741,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 5508725064705088119, guid: 9b928d884a6edcd40b62c1f1c904f19f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ba0f31ddecf125143a669255ebc0c791, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -2761,7 +2761,7 @@ Transform:
   m_GameObject: {fileID: 905094327}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 1.47, y: 1.51, z: 0}
-  m_LocalScale: {x: 0.5185, y: 0.5185, z: 0.5185}
+  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 9
@@ -3256,7 +3256,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1579452646
 Transform:
   m_ObjectHideFlags: 0
@@ -4048,7 +4048,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1784945481
 Transform:
   m_ObjectHideFlags: 0
@@ -4205,6 +4205,46 @@ MonoBehaviour:
   - {fileID: 183551315}
   Player: {fileID: 133444557}
   Switches:
+  - {fileID: 1863312441}
+  - {fileID: 364191511}
+  - {fileID: 1863312441}
+  - {fileID: 364191511}
+  - {fileID: 1863312441}
+  - {fileID: 364191511}
+  - {fileID: 1863312441}
+  - {fileID: 364191511}
+  - {fileID: 1863312441}
+  - {fileID: 364191511}
+  - {fileID: 1863312441}
+  - {fileID: 364191511}
+  - {fileID: 1863312441}
+  - {fileID: 364191511}
+  - {fileID: 1863312441}
+  - {fileID: 364191511}
+  - {fileID: 1863312441}
+  - {fileID: 364191511}
+  - {fileID: 1863312441}
+  - {fileID: 364191511}
+  - {fileID: 1863312441}
+  - {fileID: 364191511}
+  - {fileID: 1863312441}
+  - {fileID: 364191511}
+  - {fileID: 1863312441}
+  - {fileID: 364191511}
+  - {fileID: 1863312441}
+  - {fileID: 364191511}
+  - {fileID: 1863312441}
+  - {fileID: 364191511}
+  - {fileID: 1863312441}
+  - {fileID: 364191511}
+  - {fileID: 1863312441}
+  - {fileID: 364191511}
+  - {fileID: 1863312441}
+  - {fileID: 364191511}
+  - {fileID: 1863312441}
+  - {fileID: 364191511}
+  - {fileID: 1863312441}
+  - {fileID: 364191511}
   - {fileID: 1863312441}
   - {fileID: 364191511}
   - {fileID: 1863312441}
