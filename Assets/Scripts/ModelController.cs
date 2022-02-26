@@ -47,7 +47,7 @@ public class ModelController : MonoBehaviour
 
     public void Hop()
     {
-        if (AnimController == null) return;
+        if (AnimController is null) return;
         int id = Animator.StringToHash("Hop");
         AnimController.SetTrigger(id);
         audioSource.Play();

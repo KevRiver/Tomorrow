@@ -1,6 +1,7 @@
 #define DEBUG
 
 using System;
+using UnityEditor.UIElements;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -204,7 +205,7 @@ public class PlayerController : MonoBehaviour
 
             item.transform.position = (dir > 0) ? RightItem.transform.position : LeftItem.transform.position;
 
-            item.GetComponent<SpriteRenderer>().sortingOrder = 1;
+            item.GetComponent<SpriteRenderer>().sortingOrder = 5;
 
         }
         else if (Math.Abs(Input.GetAxisRaw("Vertical")) >= 1f)
@@ -248,7 +249,7 @@ public class PlayerController : MonoBehaviour
 
             item.transform.position = (dir > 0) ? RightItem.transform.position : LeftItem.transform.position;
 
-            item.GetComponent<SpriteRenderer>().sortingOrder = Convert.ToInt32(!(dir > 0));
+            item.GetComponent<SpriteRenderer>().sortingOrder = dir > 0 ? 1 : 5;
         }
     }
 
@@ -320,8 +321,14 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        Debug.Log("PlayerController OnTriggerEnter2D");
+
         GameObject collideWith = collision.gameObject;
+
+        bool collideWithItem = collision.tag.Equals("knife") || collision.tag.Equals("lock");
         bool collideWithMurderer = collideWith.tag.Equals("Murderer");
+        bool collideWithDoor = collideWith.tag.Equals("door");
+        
         if (collideWithMurderer)
         {
             bool playerHasKnife = item.activeInHierarchy && item.tag.Equals("knife");
@@ -334,9 +341,36 @@ public class PlayerController : MonoBehaviour
             Destroy(collideWith);
             item.tag = "free_hand";
             item.SetActive(false);
+            audioSource.Play();
+        }
+        else if (collideWithItem)
+        {
+            item.SetActive(true);
+            SpriteRenderer spriteRenderer = item.GetComponent<SpriteRenderer>();
+            switch (collision.tag)
+            {
+                case "knife":
+                    spriteRenderer.sprite = itemKnife;
+                    item.tag = "knife";
+                    
+                    break;
+                case "lock":
+                    spriteRenderer.sprite = itemLock;
+                    item.tag = "lock";
+                    
+                    break;
+            }
+            collision.gameObject.SetActive(false);
+        }
+        else if(collideWithDoor)
+        {
+            if (item.activeSelf && item.tag.Equals("lock"))
+            {
+                item.tag = "free_hand";
+                item.SetActive(false);
+            }
         }
 
-        GetItem(collision);
         LockTheDoor(collision);
     }
 

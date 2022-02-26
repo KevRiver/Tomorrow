@@ -150,7 +150,7 @@ MonoBehaviour:
   MoveSpeed: 5
   JumpSpeed: 2.5
   Grid: {fileID: 0}
-  IsMovedThisTurn: 0
+  IsMoving: 0
   Model: {fileID: 2920696560707301407}
   modelcontroller: {fileID: 2920696560707301405}
   Target: {fileID: 0}
@@ -198,7 +198,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0.1}
   serializedVersion: 2
-  m_Radius: 0.3
+  m_Radius: 0.2
 --- !u!50 &1674673209647801756
 Rigidbody2D:
   serializedVersion: 4

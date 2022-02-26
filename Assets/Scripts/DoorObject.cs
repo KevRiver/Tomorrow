@@ -19,16 +19,8 @@ public class DoorObject : MonoBehaviour
         audioSource = this.gameObject.GetComponent<AudioSource>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     void SetDoor(GameObject gameObject)
     {
-        Debug.Log("setdoor called");
-
         PlayerController player = gameObject.GetComponent<PlayerController>();
 
         if (!player.item.CompareTag("lock"))
